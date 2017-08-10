@@ -6,4 +6,197 @@
     android:layout_height="match_parent"
     tools:context="com.example.ishaandhamija.reachout.Activities.SignUpActivity">
 
+    <ScrollView
+        android:layout_width="368dp"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="8dp">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="250sp"
+                android:layout_height="250sp"
+                android:src="@drawable/nopicc"
+                android:layout_gravity="center"
+                android:id="@+id/userImage"/>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/getPic"
+                android:layout_width="60sp"
+                android:layout_height="60sp"
+                android:layout_margin="@dimen/fab_margin"
+                android:src="@drawable/ic_camerabtn"
+                android:layout_gravity="right"/>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="@dimen/activity_horizontal_margin">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Name"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/age"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Age"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/sex"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Sex"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/city"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="City"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/contactNo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Contact Number"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Email"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusableInTouchMode="true"
+                        android:hint="Password"
+                        android:imeActionId="@+id/login"
+                        android:imeOptions="actionUnspecified"
+                        android:inputType="textPassword"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <Button
+                    android:id="@+id/sign_up_button"
+                    style="?android:textAppearanceSmall"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="#6495ED"
+                    android:text="Sign up"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btn_reset_password"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dip"
+                    android:background="@null"
+                    android:text="Forgot Password?"
+                    android:textAllCaps="false" />
+
+                <Button
+                    android:id="@+id/sign_in_button"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dip"
+                    android:background="@null"
+                    android:text="Already Registered, Login here"
+                    android:textAllCaps="false"
+                    android:textSize="15dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_gravity="center|bottom"
+        android:visibility="gone"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="0dp" />
+
 </android.support.constraint.ConstraintLayout>

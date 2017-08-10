@@ -1,5 +1,6 @@
 package com.example.ishaandhamija.reachout.Activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -22,14 +23,14 @@ public class HomeScreenActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivity(new Intent(HomeScreenActivity.this, LoginActivity.class));
             }
         });
 
         btnSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivity(new Intent(HomeScreenActivity.this, SignUpActivity.class));
             }
         });
 
