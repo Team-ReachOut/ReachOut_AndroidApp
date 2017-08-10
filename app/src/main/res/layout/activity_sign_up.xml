@@ -65,7 +65,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Age"
-                        android:inputType="textEmailAddress"
+                        android:inputType="number"
                         android:maxLines="1"
                         android:singleLine="true"
                         android:textColor="@android:color/black" />
@@ -93,10 +93,10 @@
                     android:layout_height="wrap_content">
 
                     <EditText
-                        android:id="@+id/city"
+                        android:id="@+id/bloodgroup"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="City"
+                        android:hint="Blood Group"
                         android:inputType="textEmailAddress"
                         android:maxLines="1"
                         android:singleLine="true"
@@ -109,7 +109,23 @@
                     android:layout_height="wrap_content">
 
                     <EditText
-                        android:id="@+id/contactNo"
+                        android:id="@+id/address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Address"
+                        android:inputType="textEmailAddress"
+                        android:maxLines="1"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <EditText
+                        android:id="@+id/contactno"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Contact Number"
