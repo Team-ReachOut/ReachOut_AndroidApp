@@ -1,8 +1,6 @@
 package com.example.ishaandhamija.reachout.Activities;
 
 import android.content.Intent;
-import android.support.constraint.solver.SolverVariable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
                                     }
                                     else{
                                         Toast.makeText(LoginActivity.this, "Name : " + response.get("name") + "\n" + "BloodGroup : " + response.get("bloodgroup"), Toast.LENGTH_SHORT).show();
-                                        Intent i = new Intent(LoginActivity.this, abc.class);
+                                        Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
                                         i.putExtra("name", response.get("name").toString());
                                         i.putExtra("bloodgroup", response.get("bloodgroup").toString());
                                         startActivity(i);
