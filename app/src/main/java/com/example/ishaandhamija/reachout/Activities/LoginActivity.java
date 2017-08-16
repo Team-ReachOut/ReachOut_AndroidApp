@@ -2,10 +2,7 @@ package com.example.ishaandhamija.reachout.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-<<<<<<< HEAD
 import android.support.v7.app.AppCompatActivity;
-=======
->>>>>>> dda831b1d8423569a3b030b4dd4eecb4b61b73bc
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -53,48 +50,14 @@ public class LoginActivity extends AppCompatActivity {
                     progressDialog.show();
                     fetchJson();
                 }
-<<<<<<< HEAD
-
-                final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.43.202:5000/api/show",
-                        json,
-                        new Response.Listener<JSONObject>() {
-                            @Override
-                            public void onResponse(JSONObject response) {
-                                try {
-                                    if (response == null){
-                                        Toast.makeText(LoginActivity.this, "Invalid Username or Password", Toast.LENGTH_SHORT).show();
-                                    }
-                                    else{
-                                        Toast.makeText(LoginActivity.this, "Name : " + response.get("name") + "\n" + "BloodGroup : " + response.get("bloodgroup"), Toast.LENGTH_SHORT).show();
-                                        Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
-                                        i.putExtra("name", response.get("name").toString());
-                                        i.putExtra("bloodgroup", response.get("bloodgroup").toString());
-                                        startActivity(i);
-                                    }
-                                } catch (Exception e) {
-                                    Log.d(TAG, "onResponse: " + e.toString());
-                                    Toast.makeText(LoginActivity.this, "Dikkat", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                error.printStackTrace();
-                                Toast.makeText(LoginActivity.this, "Invalid Username or Password", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
-                requestQueue.add(jsonObjectRequest);
-=======
             }
         });
+
         btn_signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(LoginActivity.this,SignUpActivity.class);
                 startActivity(i);
->>>>>>> dda831b1d8423569a3b030b4dd4eecb4b61b73bc
             }
         });
 
@@ -137,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
                             else{
                                 progressDialog.dismiss();
                                 Toast.makeText(LoginActivity.this, "Name : " + response.get("name") + "\n" + "BloodGroup : " + response.get("bloodgroup"), Toast.LENGTH_SHORT).show();
-                                Intent i = new Intent(LoginActivity.this, abc.class);
+                                Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
                                 i.putExtra("name", response.get("name").toString());
                                 i.putExtra("bloodgroup", response.get("bloodgroup").toString());
                                 startActivity(i);

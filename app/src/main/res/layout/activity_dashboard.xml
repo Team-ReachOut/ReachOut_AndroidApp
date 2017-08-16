@@ -5,12 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-<<<<<<< HEAD:app/src/main/res/layout/activity_dashboard.xml
     tools:context="com.example.ishaandhamija.reachout.Activities.DashboardActivity">
-=======
-    android:gravity="center"
-    tools:context="com.example.ishaandhamija.reachout.Activities.reachout.Activities.abc">
->>>>>>> dda831b1d8423569a3b030b4dd4eecb4b61b73bc:app/src/main/res/layout/activity_abc.xml
 
     <TextView
         android:layout_width="wrap_content"
@@ -38,5 +33,10 @@
         android:text="Hospitals"
         android:textAllCaps="false"
         android:id="@+id/btn"/>
+
+    <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/listView"/>
 
 </LinearLayout>

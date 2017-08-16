@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
 
     android:layout_height="match_parent"
-    tools:context="com.example.ishaandhamija.reachout.Activities.reachout.Activities.SignUpActivity">
+    tools:context="com.example.ishaandhamija.reachout.Activities.SignUpActivity">
 
     <ScrollView
         android:layout_width="368dp"
