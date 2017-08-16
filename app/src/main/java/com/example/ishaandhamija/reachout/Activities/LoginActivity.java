@@ -1,8 +1,14 @@
 package com.example.ishaandhamija.reachout.Activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+<<<<<<< HEAD
 import android.support.v7.app.AppCompatActivity;
+=======
+>>>>>>> dda831b1d8423569a3b030b4dd4eecb4b61b73bc
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,7 +29,8 @@ import org.json.JSONObject;
 public class LoginActivity extends AppCompatActivity {
 
     EditText email, password;
-    Button btn_login;
+    Button btn_login,btn_signup;
+    ProgressDialog progressDialog;
 
     public static final String TAG = "volley";
 
@@ -35,17 +42,18 @@ public class LoginActivity extends AppCompatActivity {
         email = (EditText) findViewById(R.id.email);
         password = (EditText) findViewById(R.id.password);
         btn_login = (Button) findViewById(R.id.btn_login);
+        btn_signup = (Button) findViewById(R.id.btn_signup);
+        progressDialog = new ProgressDialog(this);
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                JSONObject json = new JSONObject();
-                try {
-                    json.put("email", email.getText().toString());
-                    json.put("password", password.getText().toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                if (validateFields()) {
+                    progressDialog.setTitle("Logging in!!");
+                    progressDialog.show();
+                    fetchJson();
                 }
+<<<<<<< HEAD
 
                 final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.43.202:5000/api/show",
                         json,
@@ -78,8 +86,77 @@ public class LoginActivity extends AppCompatActivity {
                         });
                 RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
                 requestQueue.add(jsonObjectRequest);
+=======
+            }
+        });
+        btn_signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(LoginActivity.this,SignUpActivity.class);
+                startActivity(i);
+>>>>>>> dda831b1d8423569a3b030b4dd4eecb4b61b73bc
             }
         });
 
     }
-}
+
+    private boolean validateFields() {
+        if (TextUtils.isEmpty(email.getText().toString()))
+        {
+            email.setError("Enter the name");
+            return false;
+        }
+        if (TextUtils.isEmpty(password.getText().toString()))
+        {
+            password.setError("Enter the password");
+            return false;
+        }
+        return true;
+    }
+
+
+    private void fetchJson() {
+        JSONObject json = new JSONObject();
+        try {
+            json.put("email", email.getText().toString());
+            json.put("password", password.getText().toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.43.202:5000/api/show",
+                json,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            if (response == null){
+                                progressDialog.dismiss();
+                                Toast.makeText(LoginActivity.this, "Invalid Username or Password", Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                progressDialog.dismiss();
+                                Toast.makeText(LoginActivity.this, "Name : " + response.get("name") + "\n" + "BloodGroup : " + response.get("bloodgroup"), Toast.LENGTH_SHORT).show();
+                                Intent i = new Intent(LoginActivity.this, abc.class);
+                                i.putExtra("name", response.get("name").toString());
+                                i.putExtra("bloodgroup", response.get("bloodgroup").toString());
+                                startActivity(i);
+                            }
+                        } catch (Exception e) {
+                            Log.d(TAG, "onResponse: " + e.toString());
+                            Toast.makeText(LoginActivity.this, "Dikkat", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                        Toast.makeText(LoginActivity.this, "Invalid Username or Password", Toast.LENGTH_SHORT).show();
+                    }
+                });
+        RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
+        requestQueue.add(jsonObjectRequest);
+    }
+    }
+
