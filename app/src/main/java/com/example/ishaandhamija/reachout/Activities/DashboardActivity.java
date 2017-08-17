@@ -79,7 +79,7 @@ public class DashboardActivity extends AppCompatActivity {
                 hospitalList.clear();
 
                 final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                        "http://192.168.43.202:5000/api/showall",
+                        "http://192.168.43.202:5199/api/showall",
                         new Response.Listener<JSONArray>() {
                             @Override
                             public void onResponse(JSONArray response) {
