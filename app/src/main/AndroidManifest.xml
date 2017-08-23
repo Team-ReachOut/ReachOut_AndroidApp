@@ -26,9 +26,18 @@
         </activity>
         <activity android:name=".Activities.HomeScreenActivity" />
         <activity android:name=".Activities.LoginActivity" />
-        <activity android:name=".Activities.SignUpActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
-        <activity android:name=".Activities.DashboardActivity"></activity>
+        <activity
+            android:name=".Activities.SignUpActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity android:name=".Activities.DashboardActivity" />
+        <activity android:name=".Activities.EditProfileActivity"
+            android:windowSoftInputMode="stateAlwaysHidden">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
     </application>
 
 </manifest>

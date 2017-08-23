@@ -19,6 +19,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.ishaandhamija.reachout.Models.User;
 import com.example.ishaandhamija.reachout.R;
 
 import org.json.JSONException;
@@ -119,10 +120,30 @@ public class LoginActivity extends AppCompatActivity {
                             }
                             else{
                                 progressDialog.dismiss();
-                                Toast.makeText(LoginActivity.this, "Name : " + response.get("name") + "\n" + "BloodGroup : " + response.get("bloodgroup"), Toast.LENGTH_SHORT).show();
+                                String name = response.get("name").toString();
+                                String age = response.get("age").toString();
+                                String bloodgroup = response.get("bloodgroup").toString();
+                                String address = response.get("address").toString() ;
+                                String contactno = response.get("phonenumber").toString();
+                                String email = response.get("email").toString();
+                                String password = response.get("password").toString();
+                                String sex = response.get("sex").toString();
+
+                                User currentUser  = new User(name,age,bloodgroup,address,contactno,email,password,sex);
+
                                 Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
-                                i.putExtra("name", response.get("name").toString());
-                                i.putExtra("bloodgroup", response.get("bloodgroup").toString());
+
+                                i.putExtra("name", name);
+                                i.putExtra("bloodgroup", bloodgroup);
+                                i.putExtra("age", age);
+                                i.putExtra("address", address);
+                                i.putExtra("contactno", contactno);
+                                i.putExtra("email", email);
+                                i.putExtra("password", password);
+                                i.putExtra("sex", sex);
+
+
+
                                 startActivity(i);
                             }
                         } catch (Exception e) {
