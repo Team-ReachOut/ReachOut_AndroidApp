@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.43.202:5000/api/show",
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.43.202:5199/api/show",
                 json,
                 new Response.Listener<JSONObject>() {
                     @Override

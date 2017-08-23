@@ -99,7 +99,7 @@ public class SignUpActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.43.202:5000/api/addone",
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.43.202:5199/api/addone",
                 json,
                 new Response.Listener<JSONObject>() {
                     @Override

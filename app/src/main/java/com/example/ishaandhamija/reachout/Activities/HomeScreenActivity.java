@@ -35,4 +35,9 @@ public class HomeScreenActivity extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    public void onBackPressed() {
+    }
+
 }
