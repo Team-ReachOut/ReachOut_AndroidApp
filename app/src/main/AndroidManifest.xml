@@ -26,12 +26,17 @@
         </activity>
         <activity android:name=".Activities.HomeScreenActivity" />
         <activity android:name=".Activities.LoginActivity" />
+<<<<<<< HEAD
         <activity android:name=".Activities.SignUpActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD8GI_xAVxd78z7TnP6dQ8BgzuhkYlrz2E" />
 
+=======
+        <activity android:name=".Activities.SignUpActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
+>>>>>>> ad5471f895d9015661652a7e5b3f5470b707ea53
         <activity android:name=".Activities.DashboardActivity"></activity>
     </application>
 
