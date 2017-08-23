@@ -26,7 +26,8 @@
         </activity>
         <activity android:name=".Activities.HomeScreenActivity" />
         <activity android:name=".Activities.LoginActivity" />
-        <activity android:name=".Activities.SignUpActivity" />
+        <activity android:name=".Activities.SignUpActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"/>
         <activity android:name=".Activities.DashboardActivity"></activity>
     </application>
 

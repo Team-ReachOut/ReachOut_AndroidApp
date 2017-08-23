@@ -2,6 +2,8 @@ package com.example.ishaandhamija.reachout.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -31,6 +33,7 @@ public class SignUpActivity extends AppCompatActivity {
     RadioGroup radioGroup;
     RadioButton radiobtnSex;
     int selectedSexId;
+    CoordinatorLayout coordinatorLayout;
     ProgressDialog progressDialog;
 
     public static final String TAG = "volley";
@@ -40,6 +43,7 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         name = (EditText) findViewById(R.id.name);
         age = (EditText) findViewById(R.id.age);
 //        sex = (EditText) findViewById(R.id.sex);
@@ -105,6 +109,8 @@ public class SignUpActivity extends AppCompatActivity {
                             Toast.makeText(SignUpActivity.this, "Signed Up", Toast.LENGTH_SHORT).show();
                             Log.d(TAG, "onResponse: ");
                             progressDialog.dismiss();
+                            Intent i = new Intent(SignUpActivity.this,LoginActivity.class);
+                            startActivity(i);
                             Toast.makeText(SignUpActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
                         } catch (Exception e) {
                             Toast.makeText(SignUpActivity.this, "Dikkat", Toast.LENGTH_SHORT).show();
@@ -114,6 +120,9 @@ public class SignUpActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        progressDialog.dismiss();
+                        Toast.makeText(SignUpActivity.this, "Failed to Register!!", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "onErrorResponse: " + error);
                         error.printStackTrace();
                     }
                 });
@@ -127,44 +136,85 @@ public class SignUpActivity extends AppCompatActivity {
         selectedSexId = radioGroup.getCheckedRadioButtonId();
         radiobtnSex = (RadioButton) findViewById(selectedSexId);
 
-        if (radiobtnSex == null){
-            Log.d(TAG, "validateFields: Sex");
-            Toast.makeText(this, "Please enter the sex", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
+        String blood = bloodgroup.getText().toString();
+        String pwd = password.getText().toString();
+        String number = contactno.getText().toString();
+        String emailId = email.getText().toString();
 
         if(TextUtils.isEmpty(name.getText().toString())){
-            name.setError("Enter the name!");
+
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the name!",Snackbar.LENGTH_LONG);
+            name.requestFocus();
+            snackbar.show();
             return false;
         }
         if(TextUtils.isEmpty(age.getText().toString())){
-            age.setError("Enter the age!");
+
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the age!",Snackbar.LENGTH_LONG);
+            age.requestFocus();
+            snackbar.show();
             return false;
         }
-//        if(TextUtils.isEmpty(sex.getText().toString())){
-//            sex.setError("Enter the sex!");
-//            return false;
-//        }
+
         if(TextUtils.isEmpty(bloodgroup.getText().toString())){
-            bloodgroup.setError("Enter the bloodgroup!");
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the bloodgroup!",Snackbar.LENGTH_LONG);
+            bloodgroup.requestFocus();
+            snackbar.show();
             return false;
         }
+
+        if(!(blood.equals("A+") || blood.equals("A-") || blood.equals("B+") || blood.equals("B-") || blood.equals("AB+")
+                || blood.equals("AB-") || blood.equals("O+") || blood.equals("O-") )){
+            bloodgroup.requestFocus();
+            bloodgroup.setError("Enter valid bloodgroup");
+            return false;
+        }
+
+        if (radiobtnSex == null){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the sex!",Snackbar.LENGTH_LONG);
+            snackbar.show();
+            return false;
+        }
+
         if(TextUtils.isEmpty(address.getText().toString())){
-            address.setError("Enter the address!");
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the address!",Snackbar.LENGTH_LONG);
+            address.requestFocus();
+            snackbar.show();
             return false;
         }
         if(TextUtils.isEmpty(contactno.getText().toString())){
-            contactno.setError("Enter the contact no.!");
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the Contact Number!",Snackbar.LENGTH_LONG);
+            contactno.requestFocus();
+            snackbar.show();
             return false;
         }
+        if (number.length() != 10){
+            contactno.requestFocus();
+            contactno.setError("Please enter a valid 10 digit no.");
+            return false;
+
+        }
         if(TextUtils.isEmpty(email.getText().toString())){
-            email.setError("Enter the email!");
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the email!",Snackbar.LENGTH_LONG);
+            email.requestFocus();
+            snackbar.show();
+            return false;
+        }
+        if(emailId.indexOf('@') == -1){
+            email.requestFocus();
+            email.setError("Please enter a valid email");
             return false;
         }
         if(TextUtils.isEmpty(password.getText().toString())){
-            password.setError("Enter the password!");
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the password!",Snackbar.LENGTH_LONG);
+            password.requestFocus();
+            snackbar.show();
             return false;
+        }
+        if(pwd.length() < 6 ){
+            password.requestFocus();
+            password.setError("Password too short");
+            return  false;
         }
         return true;
     }

@@ -2,8 +2,9 @@ package com.example.ishaandhamija.reachout.Activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -28,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText email, password;
     Button btn_login,btn_signup;
     ProgressDialog progressDialog;
+    CoordinatorLayout coordinatorLayout;
 
     public static final String TAG = "volley";
 
@@ -40,7 +42,9 @@ public class LoginActivity extends AppCompatActivity {
         password = (EditText) findViewById(R.id.password);
         btn_login = (Button) findViewById(R.id.btn_login);
         btn_signup = (Button) findViewById(R.id.btn_signup);
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         progressDialog = new ProgressDialog(this);
+
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,16 +68,32 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private boolean validateFields() {
-        if (TextUtils.isEmpty(email.getText().toString()))
-        {
-            email.setError("Enter the name");
+
+        String pwd = password.getText().toString();
+        String emailId = email.getText().toString();
+
+        if(TextUtils.isEmpty(email.getText().toString())){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the email!",Snackbar.LENGTH_LONG);
+            snackbar.show();
             return false;
         }
-        if (TextUtils.isEmpty(password.getText().toString()))
-        {
-            password.setError("Enter the password");
+        if(emailId.indexOf('@') == -1){
+            email.requestFocus();
+            email.setError("Please enter a valid email");
             return false;
         }
+        if(TextUtils.isEmpty(password.getText().toString())){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the password!",Snackbar.LENGTH_LONG);
+            snackbar.show();
+            return false;
+        }
+        if(pwd.length() < 6 ){
+            password.requestFocus();
+            password.setError("Password too short");
+            return  false;
+        }
+
+
         return true;
     }
 
@@ -116,6 +136,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         error.printStackTrace();
                         Toast.makeText(LoginActivity.this, "Invalid Username or Password", Toast.LENGTH_SHORT).show();
+                        progressDialog.dismiss();
                     }
                 });
         RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
