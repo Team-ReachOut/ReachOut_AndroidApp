@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -43,8 +46,13 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
+
+
 
         hospitalList = new ArrayList<>();
 
@@ -163,6 +171,32 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     public void onBackPressed() {
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.action_menu_items,menu);
+        MenuItem editProfile = menu.findItem(R.id.editProfile);
+        editProfile.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Intent i  = new Intent(DashboardActivity.this,EditProfileActivity.class);
+                Log.d(TAG, "onMenuItemClick: " + getIntent().getStringExtra("name"));
+                i.putExtra("name",getIntent().getStringExtra("name"));
+                i.putExtra("bloodgroup",getIntent().getStringExtra("bloodgroup"));
+                i.putExtra("age",getIntent().getStringExtra("age"));
+                i.putExtra("address",getIntent().getStringExtra("address"));
+                i.putExtra("contactno",getIntent().getStringExtra("contactno"));
+                i.putExtra("email",getIntent().getStringExtra("email"));
+                i.putExtra("password",getIntent().getStringExtra("password"));
+                i.putExtra("sex",getIntent().getStringExtra("sex"));
+                startActivity(i);
+                return false;
+            }
+        });
+        return true;
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

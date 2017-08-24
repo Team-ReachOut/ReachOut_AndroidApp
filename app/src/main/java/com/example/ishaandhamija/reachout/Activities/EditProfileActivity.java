@@ -1,5 +1,6 @@
 package com.example.ishaandhamija.reachout.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -39,25 +40,32 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         showProfile();
 
 
-        name.setText("Sarthak Mathur");
-        name.requestFocus();
-        age.setText("20");
-        bloodgroup.setText("B+");
-        address.setText("Noida");
-        contactno.setText("9565689120");
-        email.setText("sm@gmail.com");
-        password.setText("hello");
-        selectedRadio.setChecked(true);
-
-
-
-
-
-
-
     }
 
     private void showProfile() {
+
+        Intent i = getIntent();
+        String uname = i.getStringExtra("name");
+        String uage = i.getStringExtra("age");
+        String ubloodgroup = i.getStringExtra("bloodgroup");
+        String uaddress = i.getStringExtra("address");
+        String ucontactno = i.getStringExtra("contactno");
+        String uemail = i.getStringExtra("email");
+        String upassword = i.getStringExtra("password");
+        String usex = i.getStringExtra("sex");
+
+        name.setText(uname);
+        name.requestFocus();
+        age.setText(uage);
+        bloodgroup.setText(ubloodgroup);
+        address.setText(uaddress);
+        contactno.setText(ucontactno);
+        email.setText(uemail);
+        password.setText(upassword);
+
+
+
+
 
 
     }
