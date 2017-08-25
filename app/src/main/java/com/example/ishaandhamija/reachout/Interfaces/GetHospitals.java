@@ -1,5 +1,6 @@
 package com.example.ishaandhamija.reachout.Interfaces;
 
+import com.example.ishaandhamija.reachout.Models.Hospital;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -10,6 +11,6 @@ import java.util.ArrayList;
 
 public interface GetHospitals {
 
-    public void onSuccess(ArrayList<LatLng> latlonList);
+    public void onSuccess(ArrayList<Hospital> latlonList);
 
 }
