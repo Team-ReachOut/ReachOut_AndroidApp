@@ -46,7 +46,7 @@ public class SignUpActivity extends AppCompatActivity {
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         name = (EditText) findViewById(R.id.name);
         age = (EditText) findViewById(R.id.age);
-//        sex = (EditText) findViewById(R.id.sex);
+
         radioGroup = (RadioGroup) findViewById(R.id.radioSex);
         bloodgroup = (EditText) findViewById(R.id.bloodgroup);
         address = (EditText) findViewById(R.id.address);
@@ -93,7 +93,6 @@ public class SignUpActivity extends AppCompatActivity {
             json.put("address", address.getText().toString());
             json.put("age", age.getText().toString());
             json.put("sex",radiobtnSex.getText().toString());
-//            json.put("sex", sex.getText().toString());
             json.put("password", password.getText().toString());
         } catch (JSONException e) {
             e.printStackTrace();

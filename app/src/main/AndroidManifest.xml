@@ -23,6 +23,17 @@
         <activity android:name=".Activities.LoginActivity" />
         <activity android:name=".Activities.SignUpActivity" />
 
+        <activity android:name=".Activities.EditProfileActivity"
+            android:windowSoftInputMode="stateAlwaysHidden">
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        </activity>
+
+        <!--<activity android:name=".Activities.SignUpActivity" ></activity>-->
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD8GI_xAVxd78z7TnP6dQ8BgzuhkYlrz2E" />
@@ -34,6 +45,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>
