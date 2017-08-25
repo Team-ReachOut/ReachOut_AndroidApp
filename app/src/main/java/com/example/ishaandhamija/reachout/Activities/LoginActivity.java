@@ -51,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (validateFields()) {
-                    progressDialog.setTitle("Logging in!!");
+                    progressDialog.setMessage("Logging in...");
                     progressDialog.show();
                     fetchJson();
                 }

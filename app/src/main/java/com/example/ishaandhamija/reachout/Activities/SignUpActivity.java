@@ -62,7 +62,7 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 if (validateFields()) {
-                    progressDialog.setTitle("Registering..");
+                    progressDialog.setMessage("Registering...");
                     progressDialog.show();
 
                     fetchJson();
