@@ -1,7 +1,9 @@
 package com.example.ishaandhamija.reachout.Activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -32,7 +34,10 @@ public class LoginActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     CoordinatorLayout coordinatorLayout;
 
+    SharedPreferences sharedpreferences;
+
     public static final String TAG = "volley";
+    public static final String MyPREFERENCES = "MyPrefs" ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +51,14 @@ public class LoginActivity extends AppCompatActivity {
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         progressDialog = new ProgressDialog(this);
 
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (validateFields()) {
                     progressDialog.setMessage("Logging in...");
+                    progressDialog.setCanceledOnTouchOutside(false);
                     progressDialog.show();
                     fetchJson();
                 }
@@ -132,7 +139,14 @@ public class LoginActivity extends AppCompatActivity {
 
                                 User currentUser  = new User(name,age,bloodgroup,address,contactno,email,password,sex);
 
+                                SharedPreferences.Editor editor = sharedpreferences.edit();
+
+                                editor.putString("savedEmail", email);
+                                editor.putString("savedPassword", password);
+                                editor.commit();
+
                                 Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
+                                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 
                                 i.putExtra("name", name);
                                 i.putExtra("bloodgroup", bloodgroup);
@@ -143,9 +157,8 @@ public class LoginActivity extends AppCompatActivity {
                                 i.putExtra("password", password);
                                 i.putExtra("sex", sex);
 
-
-
                                 startActivity(i);
+                                finish();
                             }
                         } catch (Exception e) {
                             Log.d(TAG, "onResponse: " + e.toString());
@@ -164,5 +177,5 @@ public class LoginActivity extends AppCompatActivity {
         RequestQueue requestQueue = Volley.newRequestQueue(LoginActivity.this);
         requestQueue.add(jsonObjectRequest);
     }
-    }
+}
 

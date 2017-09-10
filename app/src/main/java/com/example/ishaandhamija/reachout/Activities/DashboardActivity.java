@@ -1,7 +1,9 @@
 package com.example.ishaandhamija.reachout.Activities;
 
 import android.app.ActionBar;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -62,13 +64,13 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     TextView hospitalName, hospitalAddress, hospitalDistance;
     CardView hospitalInfo;
 
+    SharedPreferences sharedpreferences;
+
     public static final String TAG = "Hospitals";
+    public static final String MyPREFERENCES = "MyPrefs" ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
-
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.activity_dashboard);
@@ -239,6 +241,11 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
     @Override
     public void onBackPressed() {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
     }
 
     @Override
@@ -246,9 +253,12 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
         getMenuInflater().inflate(R.menu.action_menu_items,menu);
         MenuItem editProfile = menu.findItem(R.id.editProfile);
+        MenuItem signOut = menu.findItem(R.id.signOut);
+
         editProfile.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
+
                 Intent i  = new Intent(DashboardActivity.this,EditProfileActivity.class);
                 Log.d(TAG, "onMenuItemClick: " + getIntent().getStringExtra("name"));
                 i.putExtra("name",getIntent().getStringExtra("name"));
@@ -260,9 +270,33 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                 i.putExtra("password",getIntent().getStringExtra("password"));
                 i.putExtra("sex",getIntent().getStringExtra("sex"));
                 startActivity(i);
+
                 return false;
             }
         });
+
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+
+        signOut.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+
+                SharedPreferences.Editor editor = sharedpreferences.edit();
+
+                editor.putString("savedEmail", null);
+                editor.putString("savedPassword", null);
+                editor.commit();
+
+                Intent intent = new Intent(DashboardActivity.this, HomeScreenActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                startActivity(intent);
+                finish();
+
+                return false;
+            }
+        });
+
         return true;
     }
 
