@@ -94,6 +94,7 @@ public class SignUpActivity extends AppCompatActivity {
 
                 if (validateFields()) {
                     progressDialog.setMessage("Registering...");
+                    progressDialog.setCanceledOnTouchOutside(false);
                     progressDialog.show();
 
                     fetchJson();
