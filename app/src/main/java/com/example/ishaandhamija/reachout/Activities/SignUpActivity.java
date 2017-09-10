@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -54,11 +55,12 @@ public class SignUpActivity extends AppCompatActivity {
     RadioButton radiobtnSex;
     ImageView userImage;
     int selectedSexId;
-    String encodedImage;
+    String encodedImage = null;
     CoordinatorLayout coordinatorLayout;
+    ScrollView scrollView;
     ProgressDialog progressDialog;
 
-    public static final String TAG = "volley";
+    public static final String TAG = "volleyError";
     public static final Integer REQ_CODE = 101;
     public static final Integer INTENT_REQUEST_GET_IMAGES = 1001;
     public static final Integer REQUEST_CAMERA = 10001;
@@ -83,6 +85,7 @@ public class SignUpActivity extends AppCompatActivity {
 
         getPic = (FloatingActionButton) findViewById(R.id.getPic);
         userImage = (ImageView) findViewById(R.id.userImage);
+        scrollView = (ScrollView) findViewById(R.id.scrollView);
         progressDialog = new ProgressDialog(this);
 
         sign_up_button.setOnClickListener(new View.OnClickListener() {
@@ -133,7 +136,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
 //        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.43.202:5199/api/addone",
-        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://https://reach-out-server.herokuapp.com/api/addone",
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "https://reach-out-server.herokuapp.com/api/addone",
                 json,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -279,6 +282,14 @@ public class SignUpActivity extends AppCompatActivity {
             password.setError("Password too short");
             return  false;
         }
+
+        if (encodedImage == null){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please upload your photograph!",Snackbar.LENGTH_LONG);
+            snackbar.show();
+            scrollView.fullScroll(ScrollView.FOCUS_UP);
+            return false;
+        }
+
         return true;
     }
 
