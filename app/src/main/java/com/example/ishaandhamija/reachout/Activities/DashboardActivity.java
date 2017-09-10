@@ -100,7 +100,8 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         hospitalList.clear();
 
         final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                "http://192.168.43.202:5199/api/showall",
+//                "http://192.168.43.202:5199/api/showall",
+                "https://reach-out-server.herokuapp.com/api/showall",
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
