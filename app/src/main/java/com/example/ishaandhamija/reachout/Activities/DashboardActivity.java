@@ -1,29 +1,19 @@
 package com.example.ishaandhamija.reachout.Activities;
 
-import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
-import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ListView;
-import android.widget.TextView;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
@@ -85,6 +75,8 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
         hospitalList = new ArrayList<>();
 
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+
         gps = new GPSTracker(DashboardActivity.this);
 
         if(gps.canGetLocation()){
@@ -102,8 +94,8 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         hospitalList.clear();
 
         final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-//                "http://192.168.43.202:5199/api/showall",
-                "https://reach-out-server.herokuapp.com/api/showall",
+                "http://harshgoyal.xyz:5199/api/showall",
+//                "https://reach-out-server.herokuapp.com/api/showall",
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -259,23 +251,25 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
 
-                Intent i  = new Intent(DashboardActivity.this,EditProfileActivity.class);
-                Log.d(TAG, "onMenuItemClick: " + getIntent().getStringExtra("name"));
-                i.putExtra("name",getIntent().getStringExtra("name"));
-                i.putExtra("bloodgroup",getIntent().getStringExtra("bloodgroup"));
-                i.putExtra("age",getIntent().getStringExtra("age"));
-                i.putExtra("address",getIntent().getStringExtra("address"));
-                i.putExtra("contactno",getIntent().getStringExtra("contactno"));
-                i.putExtra("email",getIntent().getStringExtra("email"));
-                i.putExtra("password",getIntent().getStringExtra("password"));
-                i.putExtra("sex",getIntent().getStringExtra("sex"));
-                startActivity(i);
+
+                    Intent i = new Intent(DashboardActivity.this, EditProfileActivity.class);
+                    Log.d(TAG, "onMenuItemClick: " + getIntent().getStringExtra("name"));
+                    i.putExtra("name", getIntent().getStringExtra("name"));
+                    i.putExtra("bloodgroup", getIntent().getStringExtra("bloodgroup"));
+                    i.putExtra("age", getIntent().getStringExtra("age"));
+                    i.putExtra("address", getIntent().getStringExtra("address"));
+                    i.putExtra("contactno", getIntent().getStringExtra("contactno"));
+                    i.putExtra("email", getIntent().getStringExtra("email"));
+                    i.putExtra("password", getIntent().getStringExtra("password"));
+                    i.putExtra("sex", getIntent().getStringExtra("sex"));
+                    startActivity(i);
 
                 return false;
             }
         });
 
-        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+
+
 
         signOut.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -299,6 +293,8 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
         return true;
     }
+
+
 
 
     @Override

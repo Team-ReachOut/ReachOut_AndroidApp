@@ -7,7 +7,6 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,8 +72,8 @@ public class SplashScreenActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-//        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.43.202:5199/api/show",
-        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "https://reach-out-server.herokuapp.com/api/show",
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://harshgoyal.xyz:5199/api/show",
+//        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "https://reach-out-server.herokuapp.com/api/show",
                 json,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -99,7 +98,6 @@ public class SplashScreenActivity extends AppCompatActivity {
 
                                 Intent i = new Intent(SplashScreenActivity.this, DashboardActivity.class);
                                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-
                                 i.putExtra("name", name);
                                 i.putExtra("bloodgroup", bloodgroup);
                                 i.putExtra("age", age);

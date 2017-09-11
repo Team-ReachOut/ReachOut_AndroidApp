@@ -115,8 +115,8 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-//        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.43.202:5199/api/show",
-        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "https://reach-out-server.herokuapp.com/api/show",
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://harshgoyal.xyz:5199/api/show",
+//        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "https://reach-out-server.herokuapp.com/api/show",
                 json,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -137,6 +137,7 @@ public class LoginActivity extends AppCompatActivity {
                                 String password = response.get("password").toString();
                                 String sex = response.get("sex").toString();
 
+
                                 User currentUser  = new User(name,age,bloodgroup,address,contactno,email,password,sex);
 
                                 SharedPreferences.Editor editor = sharedpreferences.edit();
@@ -147,7 +148,6 @@ public class LoginActivity extends AppCompatActivity {
 
                                 Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
                                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-
                                 i.putExtra("name", name);
                                 i.putExtra("bloodgroup", bloodgroup);
                                 i.putExtra("age", age);
