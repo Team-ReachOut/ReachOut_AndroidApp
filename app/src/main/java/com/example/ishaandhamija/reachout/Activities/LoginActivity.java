@@ -101,7 +101,6 @@ public class LoginActivity extends AppCompatActivity {
             return  false;
         }
 
-
         return true;
     }
 
@@ -115,7 +114,8 @@ public class LoginActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://harshgoyal.xyz:5199/api/show",
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.43.202:5199/api/show",
+//        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://harshgoyal.xyz:5199/api/show",
 //        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "https://reach-out-server.herokuapp.com/api/show",
                 json,
                 new Response.Listener<JSONObject>() {

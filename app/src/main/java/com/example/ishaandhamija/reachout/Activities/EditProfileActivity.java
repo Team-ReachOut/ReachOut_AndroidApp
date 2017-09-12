@@ -33,9 +33,6 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     RadioGroup radioGroup;
     RadioButton radioButton;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,14 +51,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
         btn_save.setOnClickListener(this);
 
-
-        
-        
         showProfile();
-
-
-
-
     }
 
     private void showProfile() {
@@ -104,11 +94,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View view) {
 
         if(view == btn_save){
-
-            Toast.makeText(this, "Clicked!", Toast.LENGTH_SHORT).show();
-
             saveChangedInfo();
-
         }
 
     }
@@ -133,29 +119,22 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             e.printStackTrace();
         }
 
-        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://harshgoyal.xyz:5199/api/update",
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.43.202:5199/api/update",
+//        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://harshgoyal.xyz:5199/api/update",
 //        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "https://reach-out-server.herokuapp.com/api/addone",
                 json,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-
-                            Log.d("Response", "onResponse: ");
-
-                            Toast.makeText(EditProfileActivity.this, "Profile Updated!!", Toast.LENGTH_SHORT).show();
-
-
+                            Toast.makeText(EditProfileActivity.this, "Profile Updated", Toast.LENGTH_SHORT).show();
                         } catch (Exception e) {
-
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("Error", "onErrorResponse: " + error);
-
                         error.printStackTrace();
                     }
                 });

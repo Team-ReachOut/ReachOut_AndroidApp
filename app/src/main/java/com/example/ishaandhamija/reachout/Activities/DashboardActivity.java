@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -22,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ishaandhamija.reachout.Interfaces.GetHospitals;
+import com.example.ishaandhamija.reachout.Interfaces.GetLocation;
 import com.example.ishaandhamija.reachout.Models.Hospital;
 import com.example.ishaandhamija.reachout.R;
 import com.example.ishaandhamija.reachout.Utils.GPSTracker;
@@ -56,6 +58,8 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
     SharedPreferences sharedpreferences;
 
+    GetLocation getLocation;
+
     public static final String TAG = "Hospitals";
     public static final String MyPREFERENCES = "MyPrefs" ;
 
@@ -79,13 +83,55 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
         gps = new GPSTracker(DashboardActivity.this);
 
-        if(gps.canGetLocation()){
-            latitude = gps.getLatitude();
-            longitude = gps.getLongitude();
-        }
-        else{
-            gps.showSettingsAlert();
-        }
+        getLocation = new GetLocation() {
+            @Override
+            public void onSuccess() {
+                final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+//                "http://harshgoyal.xyz:5199/api/showall",
+//                "https://reach-out-server.herokuapp.com/api/showall",
+                        "http://192.168.43.202:5199/api/showall",
+
+                        new Response.Listener<JSONArray>() {
+                            @Override
+                            public void onResponse(JSONArray response) {
+
+                                for (int i = 0; i < response.length(); i++) {
+                                    JSONObject hospitalObject = null;
+                                    try {
+                                        hospitalObject = response.getJSONObject(i);
+                                        Double hospitalLat = Double.parseDouble(hospitalObject.get("lat").toString());
+                                        Double hospitalLon = Double.parseDouble(hospitalObject.get("lon").toString());
+
+                                        Double d = distance(latitude, longitude, hospitalLat, hospitalLon, 'M');
+
+                                        if (d < 5000.0){
+                                            hospitalList.add(new Hospital(hospitalObject.getString("name"), hospitalObject.getString("email"),
+                                                    hospitalObject.getLong("phonenumber"), hospitalObject.getString("address"),
+                                                    hospitalObject.getString("password"), hospitalObject.getString("driver_name"),
+                                                    hospitalObject.getLong("driver_pnumber"), hospitalObject.getString("ambulance"),
+                                                    hospitalObject.getString("lat"), hospitalObject.getString("lon")));
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                                getHospitals.onSuccess(hospitalList);
+
+                            }
+                        },
+                        new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+
+                            }
+                        }
+                );
+
+                RequestQueue requestQueue = Volley.newRequestQueue(DashboardActivity.this);
+                requestQueue.add(jsonArrayRequest);
+            }
+        };
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -93,72 +139,40 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
         hospitalList.clear();
 
-        final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-                "http://harshgoyal.xyz:5199/api/showall",
-//                "https://reach-out-server.herokuapp.com/api/showall",
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
+        if (gps.getIsGPSTrackingEnabled() && gps.canGetLocation()){
+            latitude = gps.getLatitude();
+            longitude = gps.getLongitude();
+            Log.d("lattt", "onCreate: " + latitude.toString());
+            getLocation.onSuccess();
+        }
+        else{
+            gps.showSettingsAlert();
+        }
 
-                        for (int i = 0; i < response.length(); i++) {
-                            JSONObject hospitalObject = null;
-                            try {
-                                hospitalObject = response.getJSONObject(i);
-                                Double hospitalLat = Double.parseDouble(hospitalObject.get("lat").toString());
-                                Double hospitalLon = Double.parseDouble(hospitalObject.get("lon").toString());
-
-                                Double d = distance(latitude, longitude, hospitalLat, hospitalLon, 'M');
-
-                                if (d < 5000.0){
-                                    hospitalList.add(new Hospital(hospitalObject.getString("name"), hospitalObject.getString("email"),
-                                            hospitalObject.getLong("phonenumber"), hospitalObject.getString("address"),
-                                            hospitalObject.getString("password"), hospitalObject.getString("driver_name"),
-                                            hospitalObject.getLong("driver_pnumber"), hospitalObject.getString("ambulance"),
-                                            hospitalObject.getString("lat"), hospitalObject.getString("lon")));
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        getHospitals.onSuccess(hospitalList);
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-
-                    }
-                }
-        );
-
-        RequestQueue requestQueue = Volley.newRequestQueue(DashboardActivity.this);
-        requestQueue.add(jsonArrayRequest);
     }
 
     @Override
     public void onMapReady(final GoogleMap map) {
 
-        final ArrayList<Marker> myMarkers = new ArrayList<>();
-
-        final Marker myMarker = map.addMarker(new MarkerOptions()
-                .position(new LatLng(latitude, longitude))
-                .title("My Location")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.bluedot)));
-
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 12.0f));
-
-        map.addCircle(new CircleOptions()
-                .center(new LatLng(latitude, longitude))
-                .radius(5000)
-                .strokeWidth(0f)
-                .fillColor(getTransparentColor(Color.parseColor("#4682b4"))));
-
-
         getHospitals = new GetHospitals() {
             @Override
             public void onSuccess(ArrayList<Hospital> latlonList) {
+
+                final ArrayList<Marker> myMarkers = new ArrayList<>();
+
+                final Marker myMarker = map.addMarker(new MarkerOptions()
+                        .position(new LatLng(latitude, longitude))
+                        .title("My Location")
+                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.bluedot)));
+
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 12.0f));
+
+                map.addCircle(new CircleOptions()
+                        .center(new LatLng(latitude, longitude))
+                        .radius(5000)
+                        .strokeWidth(0f)
+                        .fillColor(getTransparentColor(Color.parseColor("#4682b4"))));
+
                 for (int i=0;i<latlonList.size();i++){
                     Marker marker = map.addMarker(new MarkerOptions()
                             .position(new LatLng(Double.parseDouble(hospitalList.get(i).getLat()), Double.parseDouble(hospitalList.get(i).getLon())))
@@ -167,45 +181,42 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
                     myMarkers.add(marker);
                 }
+
+                map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+
+                        if (marker.equals(myMarker)){
+                            return true;
+                        }
+
+                        for (int i=0;i<myMarkers.size();i++){
+                            if (marker.equals(myMarkers.get(i))){
+
+                                hospitalName.setText(hospitalList.get(i).getName());
+                                hospitalAddress.setText(hospitalList.get(i).getAddress());
+
+                                Double dist = distance(latitude, latitude,
+                                        Double.parseDouble(hospitalList.get(i).getLat()),
+                                        Double.parseDouble(hospitalList.get(i).getLon()), 'M');
+
+                                dist = milesTokm(dist);
+                                dist = round(dist, 2);
+
+                                hospitalDistance.setText(dist.toString() + " km");
+
+                                hospitalInfo.setVisibility(View.VISIBLE);
+
+                                Log.d(TAG, "onMarkerClick: " + dist.toString());
+
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                });
             }
         };
-
-
-        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-
-                if (marker.equals(myMarker)){
-                    return true;
-                }
-
-                for (int i=0;i<myMarkers.size();i++){
-                    if (marker.equals(myMarkers.get(i))){
-
-                        hospitalName.setText(hospitalList.get(i).getName());
-                        hospitalAddress.setText(hospitalList.get(i).getAddress());
-
-                        Double dist = distance(latitude, latitude,
-                                Double.parseDouble(hospitalList.get(i).getLat()),
-                                Double.parseDouble(hospitalList.get(i).getLon()), 'M');
-
-                        dist = milesTokm(dist);
-                        dist = round(dist, 2);
-
-                        hospitalDistance.setText(dist.toString() + " km");
-
-                        hospitalInfo.setVisibility(View.VISIBLE);
-
-                        Log.d(TAG, "onMarkerClick: " + dist.toString());
-
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-        });
-
     }
 
     private int getTransparentColor(int color){
@@ -223,12 +234,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     protected void onResume() {
         super.onResume();
 
-        gps = new GPSTracker(DashboardActivity.this);
-
-        if(gps.canGetLocation()){
-            latitude = gps.getLatitude();
-            longitude = gps.getLongitude();
-        }
     }
 
     @Override
@@ -251,7 +256,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
             @Override
             public boolean onMenuItemClick(MenuItem menuItem) {
 
-
                     Intent i = new Intent(DashboardActivity.this, EditProfileActivity.class);
                     Log.d(TAG, "onMenuItemClick: " + getIntent().getStringExtra("name"));
                     i.putExtra("name", getIntent().getStringExtra("name"));
@@ -267,9 +271,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                 return false;
             }
         });
-
-
-
 
         signOut.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -294,20 +295,25 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         return true;
     }
 
-
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(gps.canGetLocation()){
-            latitude = gps.getLatitude();
-            longitude = gps.getLongitude();
-        }
-        else{
-            Toast.makeText(gps, "Turn on Location", Toast.LENGTH_SHORT).show();
-            finish();
+        if (requestCode == 9876){
+
+            gps = new GPSTracker(DashboardActivity.this);
+
+            if (gps.getIsGPSTrackingEnabled()){
+                latitude = gps.getLatitude();
+                longitude = gps.getLongitude();
+                getLocation.onSuccess();
+            }
+
+            else{
+                Toast.makeText(DashboardActivity.this, "Turn on Location", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+
         }
     }
 
