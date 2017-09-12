@@ -52,9 +52,6 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     public static final Integer INTENT_REQUEST_GET_IMAGES = 1001;
     public static final Integer REQUEST_CAMERA = 10001;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -202,6 +199,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                     .setGuidelines(com.theartofdev.edmodo.cropper.CropImageView.Guidelines.ON)
                     .setAspectRatio(100,100)
                     .start(EditProfileActivity.this);
+            saveChangedInfo();
         }
 
         super.onActivityResult(requestCode, resultCode, intent);
@@ -237,6 +235,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         catch (JSONException e) {
             e.printStackTrace();
         }
+
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.43.202:5199/api/update",
 //        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://harshgoyal.xyz:5199/api/update",
 //        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "https://reach-out-server.herokuapp.com/api/addone",
@@ -245,22 +244,14 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-
-                            Log.d("Response", "onResponse: ");
-
-                            Toast.makeText(EditProfileActivity.this, "Profile Updated!!", Toast.LENGTH_SHORT).show();
-
-
+                            Toast.makeText(EditProfileActivity.this, "Profile Updated", Toast.LENGTH_SHORT).show();
                         } catch (Exception e) {
-
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("Error", "onErrorResponse: " + error);
-
                         error.printStackTrace();
                     }
                 });

@@ -1,5 +1,6 @@
 package com.example.ishaandhamija.reachout.Utils;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Context;
@@ -15,6 +16,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.ishaandhamija.reachout.Activities.DashboardActivity;
+
 /**
  * Created by ishaandhamija on 17/08/17.
  */
@@ -23,11 +26,15 @@ public class GPSTracker extends Service implements LocationListener {
 
     private final Context mContext;
 
+    private static final int LOC_REQ_CODE = 9876;
+
     boolean isGPSEnabled = false;
 
     boolean isNetworkEnabled = false;
 
     boolean canGetLocation = false;
+
+    boolean isGPSTrackingEnabled = false;
 
     Location location;
     double latitude;
@@ -61,6 +68,14 @@ public class GPSTracker extends Service implements LocationListener {
 
             isNetworkEnabled = locationManager
                     .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+            if (isGPSEnabled){
+                this.isGPSTrackingEnabled = true;
+            }
+
+            if (isNetworkEnabled){
+                this.isGPSTrackingEnabled = true;
+            }
 
             if (!isGPSEnabled && !isNetworkEnabled) {
             } else {
@@ -133,7 +148,6 @@ public class GPSTracker extends Service implements LocationListener {
     public double getLatitude(){
         if(location != null){
             latitude = location.getLatitude();
-//            getLocation.onSuccess(longitude);
         }
 
         return latitude;
@@ -142,7 +156,6 @@ public class GPSTracker extends Service implements LocationListener {
     public double getLongitude(){
         if(location != null){
             longitude = location.getLongitude();
-//            getLocation.onSuccess(longitude);
         }
 
         return longitude;
@@ -162,17 +175,26 @@ public class GPSTracker extends Service implements LocationListener {
         alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog,int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                mContext.startActivity(intent);
+                ((Activity) mContext).startActivityForResult(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS), LOC_REQ_CODE);
             }
         });
 
         alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+                Toast.makeText(mContext, "Turn on Location", Toast.LENGTH_SHORT).show();
+                ((Activity) mContext).finish();
             }
         });
 
+        alertDialog.setCancelable(false);
         alertDialog.show();
+
+    }
+
+    public boolean getIsGPSTrackingEnabled() {
+
+        return this.isGPSTrackingEnabled;
     }
 
     public void stopUsingGPS(){
