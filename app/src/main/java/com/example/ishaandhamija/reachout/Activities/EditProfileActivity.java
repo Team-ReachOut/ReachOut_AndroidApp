@@ -1,12 +1,18 @@
 package com.example.ishaandhamija.reachout.Activities;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
@@ -14,7 +20,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -39,6 +44,8 @@ import java.io.InputStream;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static com.example.ishaandhamija.reachout.Activities.SignUpActivity.REQ_CODE;
+
 public class EditProfileActivity extends AppCompatActivity implements View.OnClickListener  {
 
     EditText name, age, bloodgroup, address, contactno, email, password;
@@ -46,7 +53,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     CircleImageView profilePic;
     RadioGroup radioGroup;
     RadioButton radioButton;
-    LinearLayout ppLayout;
+    FloatingActionButton fab;
     String encodedImage = null;
 
     public static final Integer INTENT_REQUEST_GET_IMAGES = 1001;
@@ -67,10 +74,11 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         email = (EditText) findViewById(R.id.email);
         password = (EditText) findViewById(R.id.password);
         btn_save = (Button) findViewById(R.id.save);
-        ppLayout = (LinearLayout) findViewById(R.id.ppLayout);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+
 
         btn_save.setOnClickListener(this);
-        ppLayout.setOnClickListener(this);
+        fab.setOnClickListener(this);
 
         showProfile();
 
@@ -93,7 +101,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                 .with(this)
                 .load(imageUrl)
                 .placeholder(R.drawable.nopicc)
-                .error(R.mipmap.ic_launcher)
+                .error(R.drawable.nopicc)
                 .into(profilePic);
 
         name.setText(uname);
@@ -127,7 +135,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             Toast.makeText(this, "Clicked!", Toast.LENGTH_SHORT).show();
             saveChangedInfo();
         }
-        if(view == ppLayout){
+        if (view == fab){
             getImages();
         }
 
@@ -143,7 +151,15 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (which == 0){
+                    int cameraPerm = ContextCompat.checkSelfPermission(EditProfileActivity.this, Manifest.permission.CAMERA);
+                    if (cameraPerm != PackageManager.PERMISSION_GRANTED){
+                        ActivityCompat.requestPermissions(EditProfileActivity.this, new String[]{
+                                Manifest.permission.CAMERA
+                        }, REQ_CODE);
+                    }
+                    else {
                         takeFromCamera();
+                    }
                     }
                 else if (which == 1){
                     Intent i=new Intent(Intent.ACTION_PICK);
@@ -205,6 +221,24 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         super.onActivityResult(requestCode, resultCode, intent);
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (requestCode == REQ_CODE) {
+            for (int result : grantResults) {
+                if (result == PackageManager.PERMISSION_DENIED) {
+                    Toast.makeText(this, "Permission Not Given", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+            }
+            takeFromCamera();
+        }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+
     private String encodeImage(Bitmap bm)
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -236,8 +270,8 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             e.printStackTrace();
         }
 
-        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.43.202:5199/api/update",
-//        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://harshgoyal.xyz:5199/api/update",
+//        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.43.202:5199/api/update",
+        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://harshgoyal.xyz:5199/api/update",
 //        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "https://reach-out-server.herokuapp.com/api/addone",
                 json,
                 new Response.Listener<JSONObject>() {

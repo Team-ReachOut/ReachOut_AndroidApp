@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -87,9 +86,9 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
             @Override
             public void onSuccess() {
                 final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
-//                "http://harshgoyal.xyz:5199/api/showall",
+                "http://harshgoyal.xyz:5199/api/showall",
 //                "https://reach-out-server.herokuapp.com/api/showall",
-                        "http://192.168.43.202:5199/api/showall",
+//                        "http://192.168.43.202:5199/api/showall",
 
                         new Response.Listener<JSONArray>() {
                             @Override
