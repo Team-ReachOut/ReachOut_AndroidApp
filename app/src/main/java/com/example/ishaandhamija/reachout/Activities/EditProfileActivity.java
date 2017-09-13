@@ -1,6 +1,7 @@
 package com.example.ishaandhamija.reachout.Activities;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -48,13 +49,17 @@ import static com.example.ishaandhamija.reachout.Activities.SignUpActivity.REQ_C
 
 public class EditProfileActivity extends AppCompatActivity implements View.OnClickListener  {
 
+    public static final String TAG = "EditProfileActivity";
+
     EditText name, age, bloodgroup, address, contactno, email, password;
     Button btn_save;
     CircleImageView profilePic;
     RadioGroup radioGroup;
-    RadioButton radioButton;
+    RadioButton radiobtnSex;
+    int selectedSexId;
     FloatingActionButton fab;
     String encodedImage = null;
+    ProgressDialog progressDialog;
 
     public static final Integer INTENT_REQUEST_GET_IMAGES = 1001;
     public static final Integer REQUEST_CAMERA = 10001;
@@ -75,6 +80,8 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         password = (EditText) findViewById(R.id.password);
         btn_save = (Button) findViewById(R.id.save);
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        progressDialog = new ProgressDialog(this);
+
 
 
         btn_save.setOnClickListener(this);
@@ -115,7 +122,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         email.setTextColor(Color.GRAY);
         password.setText(upassword);
 
-        if(usex.equals("Male")){
+         if(usex.equals("Male")){
             radioGroup.check(R.id.male);
         }
         else if(usex.equals("Female")){
@@ -133,6 +140,12 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
         if(view == btn_save){
             Toast.makeText(this, "Clicked!", Toast.LENGTH_SHORT).show();
+            selectedSexId = radioGroup.getCheckedRadioButtonId();
+            radiobtnSex = (RadioButton) findViewById(selectedSexId);
+
+            progressDialog.setMessage("Saving Changes...");
+            progressDialog.setCanceledOnTouchOutside(false);
+            progressDialog.show();
             saveChangedInfo();
         }
         if (view == fab){
@@ -215,7 +228,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                     .setGuidelines(com.theartofdev.edmodo.cropper.CropImageView.Guidelines.ON)
                     .setAspectRatio(100,100)
                     .start(EditProfileActivity.this);
-            saveChangedInfo();
+
         }
 
         super.onActivityResult(requestCode, resultCode, intent);
@@ -253,7 +266,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     private void saveChangedInfo() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-        radioButton = (RadioButton) findViewById(radioGroup.getCheckedRadioButtonId());
+
 
         JSONObject json = new JSONObject();
         try {
@@ -263,8 +276,9 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             json.put("phonenumber", contactno.getText().toString());
             json.put("address", address.getText().toString());
             json.put("age", age.getText().toString());
-            json.put("sex",radioButton.getText().toString());
+            json.put("sex",((RadioButton) findViewById(radioGroup.getCheckedRadioButtonId())).getText().toString());
             json.put("password", password.getText().toString());
+            json.put("imageString", encodedImage);
         }
         catch (JSONException e) {
             e.printStackTrace();
@@ -278,7 +292,10 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            progressDialog.dismiss();
                             Toast.makeText(EditProfileActivity.this, "Profile Updated", Toast.LENGTH_SHORT).show();
+                            Intent i = new Intent(EditProfileActivity.this,DashboardActivity.class);
+                            startActivity(i);
                         } catch (Exception e) {
                         }
                     }
@@ -286,6 +303,9 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        progressDialog.dismiss();
+                        Log.d(TAG, "onErrorResponse: " + error);
+                        Toast.makeText(EditProfileActivity.this, "Failed to make changes!!", Toast.LENGTH_SHORT).show();
                         error.printStackTrace();
                     }
                 });
