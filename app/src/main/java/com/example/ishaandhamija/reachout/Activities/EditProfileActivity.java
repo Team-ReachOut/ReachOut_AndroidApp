@@ -1,6 +1,7 @@
 package com.example.ishaandhamija.reachout.Activities;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -10,11 +11,14 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -48,13 +53,19 @@ import static com.example.ishaandhamija.reachout.Activities.SignUpActivity.REQ_C
 
 public class EditProfileActivity extends AppCompatActivity implements View.OnClickListener  {
 
+    public static final String TAG = "EditProfileActivity";
+
     EditText name, age, bloodgroup, address, contactno, email, password;
     Button btn_save;
     CircleImageView profilePic;
     RadioGroup radioGroup;
-    RadioButton radioButton;
+    RadioButton radiobtnSex;
+    int selectedSexId;
     FloatingActionButton fab;
     String encodedImage = null;
+    ProgressDialog progressDialog;
+    CoordinatorLayout coordinatorLayout;
+    ScrollView scrollView;
 
     public static final Integer INTENT_REQUEST_GET_IMAGES = 1001;
     public static final Integer REQUEST_CAMERA = 10001;
@@ -64,6 +75,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         profilePic = (CircleImageView) findViewById(R.id.profilePic);
         name = (EditText) findViewById(R.id.name);
         age = (EditText) findViewById(R.id.age);
@@ -75,6 +87,9 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         password = (EditText) findViewById(R.id.password);
         btn_save = (Button) findViewById(R.id.save);
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        progressDialog = new ProgressDialog(this);
+        scrollView = (ScrollView) findViewById(R.id.scrollView);
+
 
 
         btn_save.setOnClickListener(this);
@@ -115,7 +130,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         email.setTextColor(Color.GRAY);
         password.setText(upassword);
 
-        if(usex.equals("Male")){
+         if(usex.equals("Male")){
             radioGroup.check(R.id.male);
         }
         else if(usex.equals("Female")){
@@ -133,7 +148,17 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
         if(view == btn_save){
             Toast.makeText(this, "Clicked!", Toast.LENGTH_SHORT).show();
-            saveChangedInfo();
+            selectedSexId = radioGroup.getCheckedRadioButtonId();
+            radiobtnSex = (RadioButton) findViewById(selectedSexId);
+
+
+            if(validateFields()){
+                progressDialog.setMessage("Saving Changes...");
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.show();
+                saveChangedInfo();
+            }
+
         }
         if (view == fab){
             getImages();
@@ -215,7 +240,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                     .setGuidelines(com.theartofdev.edmodo.cropper.CropImageView.Guidelines.ON)
                     .setAspectRatio(100,100)
                     .start(EditProfileActivity.this);
-            saveChangedInfo();
+
         }
 
         super.onActivityResult(requestCode, resultCode, intent);
@@ -253,7 +278,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     private void saveChangedInfo() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
-        radioButton = (RadioButton) findViewById(radioGroup.getCheckedRadioButtonId());
+
 
         JSONObject json = new JSONObject();
         try {
@@ -263,8 +288,9 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             json.put("phonenumber", contactno.getText().toString());
             json.put("address", address.getText().toString());
             json.put("age", age.getText().toString());
-            json.put("sex",radioButton.getText().toString());
+            json.put("sex",((RadioButton) findViewById(radioGroup.getCheckedRadioButtonId())).getText().toString());
             json.put("password", password.getText().toString());
+            json.put("imageString", encodedImage);
         }
         catch (JSONException e) {
             e.printStackTrace();
@@ -278,7 +304,10 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+                            progressDialog.dismiss();
                             Toast.makeText(EditProfileActivity.this, "Profile Updated", Toast.LENGTH_SHORT).show();
+                            Intent i = new Intent(EditProfileActivity.this,DashboardActivity.class);
+                            startActivity(i);
                         } catch (Exception e) {
                         }
                     }
@@ -286,10 +315,109 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        progressDialog.dismiss();
+                        Log.d(TAG, "onErrorResponse: " + error);
+                        Toast.makeText(EditProfileActivity.this, "Failed to make changes!!", Toast.LENGTH_SHORT).show();
                         error.printStackTrace();
                     }
                 });
         requestQueue.add(jsonObjectRequest);
 
+    }
+
+    private boolean validateFields() {
+
+        selectedSexId = radioGroup.getCheckedRadioButtonId();
+        radiobtnSex = (RadioButton) findViewById(selectedSexId);
+
+        String blood = bloodgroup.getText().toString();
+        String pwd = password.getText().toString();
+        String number = contactno.getText().toString();
+        String emailId = email.getText().toString();
+
+        if(TextUtils.isEmpty(name.getText().toString())){
+
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the name!",Snackbar.LENGTH_LONG);
+            name.requestFocus();
+            snackbar.show();
+            return false;
+        }
+        if(TextUtils.isEmpty(age.getText().toString())){
+
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the age!",Snackbar.LENGTH_LONG);
+            age.requestFocus();
+            snackbar.show();
+            return false;
+        }
+
+        if(TextUtils.isEmpty(bloodgroup.getText().toString())){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the bloodgroup!",Snackbar.LENGTH_LONG);
+            bloodgroup.requestFocus();
+            snackbar.show();
+            return false;
+        }
+
+        if(!(blood.equals("A+") || blood.equals("A-") || blood.equals("B+") || blood.equals("B-") || blood.equals("AB+")
+                || blood.equals("AB-") || blood.equals("O+") || blood.equals("O-") )){
+            bloodgroup.requestFocus();
+            bloodgroup.setError("Enter valid bloodgroup");
+            return false;
+        }
+
+        if (radiobtnSex == null){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the sex!",Snackbar.LENGTH_LONG);
+            snackbar.show();
+            return false;
+        }
+
+        if(TextUtils.isEmpty(address.getText().toString())){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the address!",Snackbar.LENGTH_LONG);
+            address.requestFocus();
+            snackbar.show();
+            return false;
+        }
+        if(TextUtils.isEmpty(contactno.getText().toString())){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the Contact Number!",Snackbar.LENGTH_LONG);
+            contactno.requestFocus();
+            snackbar.show();
+            return false;
+        }
+        if (number.length() != 10){
+            contactno.requestFocus();
+            contactno.setError("Please enter a valid 10 digit no.");
+            return false;
+
+        }
+        if(TextUtils.isEmpty(email.getText().toString())){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the email!",Snackbar.LENGTH_LONG);
+            email.requestFocus();
+            snackbar.show();
+            return false;
+        }
+        if(emailId.indexOf('@') == -1){
+            email.requestFocus();
+            email.setError("Please enter a valid email");
+            return false;
+        }
+        if(TextUtils.isEmpty(password.getText().toString())){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the password!",Snackbar.LENGTH_LONG);
+            password.requestFocus();
+            snackbar.show();
+            return false;
+        }
+        if(pwd.length() < 6 ){
+            password.requestFocus();
+            password.setError("Password too short");
+            return  false;
+        }
+
+        if (profilePic.getDrawable().getConstantState() == getResources().getDrawable( R.drawable.nopicc).getConstantState()){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please upload your photograph!",Snackbar.LENGTH_LONG);
+            snackbar.show();
+            scrollView.fullScroll(ScrollView.FOCUS_UP);
+            return false;
+        }
+
+        return true;
     }
 }
