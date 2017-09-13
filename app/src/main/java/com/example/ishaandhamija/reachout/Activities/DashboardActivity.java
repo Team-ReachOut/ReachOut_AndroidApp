@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +23,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.ishaandhamija.reachout.AsyncTasks.LocAsyncTask;
 import com.example.ishaandhamija.reachout.Interfaces.GetHospitals;
 import com.example.ishaandhamija.reachout.Interfaces.GetLocation;
 import com.example.ishaandhamija.reachout.Models.Hospital;
@@ -55,8 +56,12 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
     TextView hospitalName, hospitalAddress, hospitalDistance;
     CardView hospitalInfo;
+    FloatingActionButton emegencyBtn;
 
     SharedPreferences sharedpreferences;
+
+    ArrayList<Marker> myMarkers;
+    Marker myMarker;
 
     public static GetLocation getLocation;
 
@@ -78,6 +83,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         hospitalAddress = (TextView) findViewById(R.id.hospitalAddress);
         hospitalDistance = (TextView) findViewById(R.id.hospitalDistance);
         hospitalInfo = (CardView) findViewById(R.id.hospitalInfo);
+        emegencyBtn = (FloatingActionButton) findViewById(R.id.emergencyBtn);
 
         hospitalList = new ArrayList<>();
 
@@ -142,15 +148,19 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         hospitalList.clear();
 
         if (gps.getIsGPSTrackingEnabled() && gps.canGetLocation()){
-//            latitude = gps.getLatitude();
-//            longitude = gps.getLongitude();
-//            getLocation.onSuccess();
             gpsIsEnabled = true;
             gps.getLocation();
         }
         else{
             gps.showSettingsAlert();
         }
+
+        emegencyBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(DashboardActivity.this, "Emergency Btn", Toast.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
@@ -161,9 +171,9 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
             @Override
             public void onSuccess(ArrayList<Hospital> latlonList) {
 
-                final ArrayList<Marker> myMarkers = new ArrayList<>();
+                myMarkers = new ArrayList<>();
 
-                final Marker myMarker = map.addMarker(new MarkerOptions()
+                myMarker = map.addMarker(new MarkerOptions()
                         .position(new LatLng(latitude, longitude))
                         .title("My Location")
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.bluedot)));
@@ -184,42 +194,42 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
                     myMarkers.add(marker);
                 }
-
-                map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker) {
-
-                        if (marker.equals(myMarker)){
-                            return true;
-                        }
-
-                        for (int i=0;i<myMarkers.size();i++){
-                            if (marker.equals(myMarkers.get(i))){
-
-                                hospitalName.setText(hospitalList.get(i).getName());
-                                hospitalAddress.setText(hospitalList.get(i).getAddress());
-
-                                Double dist = distance(latitude, latitude,
-                                        Double.parseDouble(hospitalList.get(i).getLat()),
-                                        Double.parseDouble(hospitalList.get(i).getLon()), 'M');
-
-                                dist = milesTokm(dist);
-                                dist = round(dist, 2);
-
-                                hospitalDistance.setText(dist.toString() + " km");
-
-                                hospitalInfo.setVisibility(View.VISIBLE);
-
-                                Log.d(TAG, "onMarkerClick: " + dist.toString());
-
-                                return true;
-                            }
-                        }
-                        return false;
-                    }
-                });
             }
         };
+
+        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+
+                if (marker.equals(myMarker)){
+                    return true;
+                }
+
+                for (int i=0;i<myMarkers.size();i++){
+                    if (marker.equals(myMarkers.get(i))){
+
+                        hospitalName.setText(hospitalList.get(i).getName());
+                        hospitalAddress.setText(hospitalList.get(i).getAddress());
+
+                        Double dist = distance(latitude, latitude,
+                                Double.parseDouble(hospitalList.get(i).getLat()),
+                                Double.parseDouble(hospitalList.get(i).getLon()), 'M');
+
+                        dist = milesTokm(dist);
+                        dist = round(dist, 2);
+
+                        hospitalDistance.setText(dist.toString() + " km");
+
+                        hospitalInfo.setVisibility(View.VISIBLE);
+
+                        Log.d(TAG, "onMarkerClick: " + dist.toString());
+
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     private int getTransparentColor(int color){

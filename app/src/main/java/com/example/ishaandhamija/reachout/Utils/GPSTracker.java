@@ -98,6 +98,8 @@ public class GPSTracker extends Service implements LocationListener {
                             DashboardActivity.longitude = location.getLongitude();
                             DashboardActivity.getLocation.onSuccess();
                             progressDialog.dismiss();
+
+                            markerPut = true;
                         }
                         else{
                             progressDialog = new ProgressDialog(mContext);
@@ -151,7 +153,6 @@ public class GPSTracker extends Service implements LocationListener {
             DashboardActivity.getLocation.onSuccess();
 
             markerPut = true;
-
         }
     }
 
