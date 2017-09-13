@@ -2,6 +2,7 @@ package com.example.ishaandhamija.reachout.Utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.ishaandhamija.reachout.Activities.DashboardActivity;
+import com.example.ishaandhamija.reachout.Interfaces.GetLocation;
 
 /**
  * Created by ishaandhamija on 17/08/17.
@@ -46,12 +48,7 @@ public class GPSTracker extends Service implements LocationListener {
 
     protected LocationManager locationManager;
 
-//    GetLocation getLocation = new GetLocation() {
-//        @Override
-//        public void onSuccess(Double lat) {
-//            Toast.makeText(mContext, lat.toString(), Toast.LENGTH_SHORT).show();
-//        }
-//    };
+    ProgressDialog progressDialog;
 
     public GPSTracker(Context context) {
         this.mContext = context;
@@ -91,9 +88,20 @@ public class GPSTracker extends Service implements LocationListener {
                         //noinspection MissingPermission
                         location = locationManager
                                 .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
                         if (location != null) {
                             latitude = location.getLatitude();
+                            DashboardActivity.latitude = location.getLatitude();
                             longitude = location.getLongitude();
+                            DashboardActivity.longitude = location.getLongitude();
+                            DashboardActivity.getLocation.onSuccess();
+                            progressDialog.dismiss();
+                        }
+                        else{
+                            progressDialog = new ProgressDialog(mContext);
+                            progressDialog.setMessage("Fetching Location...");
+                            progressDialog.show();
+                            progressDialog.setCanceledOnTouchOutside(false);
                         }
                     }
                 }
@@ -126,6 +134,18 @@ public class GPSTracker extends Service implements LocationListener {
     }
     @Override
     public void onLocationChanged(Location location) {
+
+        if (progressDialog != null){
+            progressDialog.dismiss();
+        }
+
+        this.location = location;
+        latitude = location.getLatitude();
+        DashboardActivity.latitude = location.getLatitude();
+        longitude = location.getLongitude();
+        DashboardActivity.longitude = location.getLongitude();
+        DashboardActivity.getLocation.onSuccess();
+
     }
 
     @Override
