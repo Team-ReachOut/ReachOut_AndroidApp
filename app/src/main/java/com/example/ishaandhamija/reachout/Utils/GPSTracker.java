@@ -38,6 +38,8 @@ public class GPSTracker extends Service implements LocationListener {
 
     boolean isGPSTrackingEnabled = false;
 
+    boolean markerPut = false;
+
     Location location;
     double latitude;
     double longitude;
@@ -135,17 +137,22 @@ public class GPSTracker extends Service implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
 
-        if (progressDialog != null){
-            progressDialog.dismiss();
+        if (!markerPut) {
+
+            if (progressDialog != null) {
+                progressDialog.dismiss();
+            }
+
+            this.location = location;
+            latitude = location.getLatitude();
+            DashboardActivity.latitude = location.getLatitude();
+            longitude = location.getLongitude();
+            DashboardActivity.longitude = location.getLongitude();
+            DashboardActivity.getLocation.onSuccess();
+
+            markerPut = true;
+
         }
-
-        this.location = location;
-        latitude = location.getLatitude();
-        DashboardActivity.latitude = location.getLatitude();
-        longitude = location.getLongitude();
-        DashboardActivity.longitude = location.getLongitude();
-        DashboardActivity.getLocation.onSuccess();
-
     }
 
     @Override
