@@ -21,6 +21,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.ishaandhamija.reachout.AsyncTasks.LocAsyncTask;
 import com.example.ishaandhamija.reachout.Interfaces.GetHospitals;
 import com.example.ishaandhamija.reachout.Interfaces.GetLocation;
 import com.example.ishaandhamija.reachout.Models.Hospital;
@@ -46,7 +47,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
     GPSTracker gps;
 
-    Double latitude, longitude;
+    public static Double latitude, longitude;
 
     ArrayList<Hospital> hospitalList;
 
@@ -57,7 +58,9 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
     SharedPreferences sharedpreferences;
 
-    GetLocation getLocation;
+    public static GetLocation getLocation;
+
+    public static Boolean gpsIsEnabled = false;
 
     public static final String TAG = "Hospitals";
     public static final String MyPREFERENCES = "MyPrefs" ;
@@ -139,10 +142,11 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         hospitalList.clear();
 
         if (gps.getIsGPSTrackingEnabled() && gps.canGetLocation()){
-            latitude = gps.getLatitude();
-            longitude = gps.getLongitude();
-            Log.d("lattt", "onCreate: " + latitude.toString());
-            getLocation.onSuccess();
+//            latitude = gps.getLatitude();
+//            longitude = gps.getLongitude();
+//            getLocation.onSuccess();
+            gpsIsEnabled = true;
+            gps.getLocation();
         }
         else{
             gps.showSettingsAlert();
@@ -303,9 +307,11 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
             gps = new GPSTracker(DashboardActivity.this);
 
             if (gps.getIsGPSTrackingEnabled()){
-                latitude = gps.getLatitude();
-                longitude = gps.getLongitude();
-                getLocation.onSuccess();
+//                latitude = gps.getLatitude();
+//                longitude = gps.getLongitude();
+//                getLocation.onSuccess();
+                gpsIsEnabled = true;
+                gps.getLocation();
             }
 
             else{
