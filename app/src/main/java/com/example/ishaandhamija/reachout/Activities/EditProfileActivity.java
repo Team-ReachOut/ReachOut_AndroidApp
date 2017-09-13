@@ -11,11 +11,14 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -60,6 +64,8 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     FloatingActionButton fab;
     String encodedImage = null;
     ProgressDialog progressDialog;
+    CoordinatorLayout coordinatorLayout;
+    ScrollView scrollView;
 
     public static final Integer INTENT_REQUEST_GET_IMAGES = 1001;
     public static final Integer REQUEST_CAMERA = 10001;
@@ -69,6 +75,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
         profilePic = (CircleImageView) findViewById(R.id.profilePic);
         name = (EditText) findViewById(R.id.name);
         age = (EditText) findViewById(R.id.age);
@@ -81,6 +88,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         btn_save = (Button) findViewById(R.id.save);
         fab = (FloatingActionButton) findViewById(R.id.fab);
         progressDialog = new ProgressDialog(this);
+        scrollView = (ScrollView) findViewById(R.id.scrollView);
 
 
 
@@ -143,10 +151,14 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
             selectedSexId = radioGroup.getCheckedRadioButtonId();
             radiobtnSex = (RadioButton) findViewById(selectedSexId);
 
-            progressDialog.setMessage("Saving Changes...");
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.show();
-            saveChangedInfo();
+
+            if(validateFields()){
+                progressDialog.setMessage("Saving Changes...");
+                progressDialog.setCanceledOnTouchOutside(false);
+                progressDialog.show();
+                saveChangedInfo();
+            }
+
         }
         if (view == fab){
             getImages();
@@ -311,5 +323,101 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                 });
         requestQueue.add(jsonObjectRequest);
 
+    }
+
+    private boolean validateFields() {
+
+        selectedSexId = radioGroup.getCheckedRadioButtonId();
+        radiobtnSex = (RadioButton) findViewById(selectedSexId);
+
+        String blood = bloodgroup.getText().toString();
+        String pwd = password.getText().toString();
+        String number = contactno.getText().toString();
+        String emailId = email.getText().toString();
+
+        if(TextUtils.isEmpty(name.getText().toString())){
+
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the name!",Snackbar.LENGTH_LONG);
+            name.requestFocus();
+            snackbar.show();
+            return false;
+        }
+        if(TextUtils.isEmpty(age.getText().toString())){
+
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the age!",Snackbar.LENGTH_LONG);
+            age.requestFocus();
+            snackbar.show();
+            return false;
+        }
+
+        if(TextUtils.isEmpty(bloodgroup.getText().toString())){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the bloodgroup!",Snackbar.LENGTH_LONG);
+            bloodgroup.requestFocus();
+            snackbar.show();
+            return false;
+        }
+
+        if(!(blood.equals("A+") || blood.equals("A-") || blood.equals("B+") || blood.equals("B-") || blood.equals("AB+")
+                || blood.equals("AB-") || blood.equals("O+") || blood.equals("O-") )){
+            bloodgroup.requestFocus();
+            bloodgroup.setError("Enter valid bloodgroup");
+            return false;
+        }
+
+        if (radiobtnSex == null){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the sex!",Snackbar.LENGTH_LONG);
+            snackbar.show();
+            return false;
+        }
+
+        if(TextUtils.isEmpty(address.getText().toString())){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the address!",Snackbar.LENGTH_LONG);
+            address.requestFocus();
+            snackbar.show();
+            return false;
+        }
+        if(TextUtils.isEmpty(contactno.getText().toString())){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the Contact Number!",Snackbar.LENGTH_LONG);
+            contactno.requestFocus();
+            snackbar.show();
+            return false;
+        }
+        if (number.length() != 10){
+            contactno.requestFocus();
+            contactno.setError("Please enter a valid 10 digit no.");
+            return false;
+
+        }
+        if(TextUtils.isEmpty(email.getText().toString())){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the email!",Snackbar.LENGTH_LONG);
+            email.requestFocus();
+            snackbar.show();
+            return false;
+        }
+        if(emailId.indexOf('@') == -1){
+            email.requestFocus();
+            email.setError("Please enter a valid email");
+            return false;
+        }
+        if(TextUtils.isEmpty(password.getText().toString())){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please enter the password!",Snackbar.LENGTH_LONG);
+            password.requestFocus();
+            snackbar.show();
+            return false;
+        }
+        if(pwd.length() < 6 ){
+            password.requestFocus();
+            password.setError("Password too short");
+            return  false;
+        }
+
+        if (profilePic.getDrawable().getConstantState() == getResources().getDrawable( R.drawable.nopicc).getConstantState()){
+            Snackbar snackbar  = Snackbar.make(coordinatorLayout,"Please upload your photograph!",Snackbar.LENGTH_LONG);
+            snackbar.show();
+            scrollView.fullScroll(ScrollView.FOCUS_UP);
+            return false;
+        }
+
+        return true;
     }
 }
