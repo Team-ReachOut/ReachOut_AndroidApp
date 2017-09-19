@@ -1,5 +1,6 @@
 package com.example.ishaandhamija.reachout.Activities;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,11 +11,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
-import android.widget.FrameLayout;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,6 +40,7 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,6 +63,14 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     FloatingActionButton emegencyBtn;
 
     SharedPreferences sharedpreferences;
+
+//    MyAdapter myAdapter1,myAdapter2;
+    ArrayList<String> members;
+    ArrayList<String> emergencies;
+    MaterialSpinner spinner1,spinner2;
+    Button btnSubmit;
+
+
 
     ArrayList<Marker> myMarkers;
     Marker myMarker;
@@ -85,7 +97,11 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         hospitalInfo = (CardView) findViewById(R.id.hospitalInfo);
         emegencyBtn = (FloatingActionButton) findViewById(R.id.emergencyBtn);
 
+
+
         hospitalList = new ArrayList<>();
+        members = new ArrayList<>();
+        emergencies = new ArrayList<>();
 
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
@@ -159,6 +175,40 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
             @Override
             public void onClick(View view) {
                 Toast.makeText(DashboardActivity.this, "Emergency Btn", Toast.LENGTH_SHORT).show();
+                final Dialog emergencyDialog = new Dialog(DashboardActivity.this);
+                emergencyDialog.getWindow().setBackgroundDrawable(null);
+                emergencyDialog.setContentView(R.layout.emergency_dialog);
+                WindowManager.LayoutParams lp = emergencyDialog.getWindow().getAttributes();
+                Window window = emergencyDialog.getWindow();
+                lp.copyFrom(window.getAttributes());
+                lp.width = WindowManager.LayoutParams.MATCH_PARENT;
+                lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+                window.setAttributes(lp);
+                lp.gravity = Gravity.CENTER;
+                emergencyDialog.setCancelable(false);
+                emergencyDialog.show();
+                spinner1 = (MaterialSpinner) emergencyDialog.findViewById(R.id.spinner1);
+                spinner2 = (MaterialSpinner) emergencyDialog.findViewById(R.id.spinner2);
+                spinner1.setItems("Ice Cream Sandwich", "Jelly Bean", "KitKat", "Lollipop", "Marshmallow");
+                spinner2.setItems("Ice Cream Sandwich", "Jelly Bean", "KitKat", "Lollipop", "Marshmallow");
+                spinner1.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
+                        Toast.makeText(DashboardActivity.this,"Clicked : "+item , Toast.LENGTH_SHORT).show();
+                    }
+                });
+                btnSubmit = (Button) emergencyDialog.findViewById(R.id.btnSubmit);
+                btnSubmit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Toast.makeText(DashboardActivity.this, "Response Recorded!!", Toast.LENGTH_SHORT).show();
+                        emergencyDialog.dismiss();
+                    }
+                });
+
+
+
+
             }
         });
 
@@ -389,4 +439,53 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         return (double) tmp / factor;
     }
 
+//    class MyAdapter extends RecyclerView.Adapter<MyAdapter.ListViewHolder> implements FastScroller.SectionIndexer{
+//
+//        Context context;
+//        ArrayList<String> mlist;
+//
+//        public MyAdapter(Context context, ArrayList<String> mlist) {
+//            this.context = context;
+//            this.mlist = mlist;
+//        }
+//
+//        @Override
+//        public MyAdapter.ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+//            LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//            View view  = li.inflate(R.layout.dialog_list_item,parent,false);
+//            return new ListViewHolder(view);
+//        }
+//
+//        @Override
+//        public void onBindViewHolder(MyAdapter.ListViewHolder holder, int position) {
+//
+//            String item = mlist.get(position);
+//            holder.textView.setText(item);
+//
+//        }
+//
+//        @Override
+//        public int getItemCount() {
+//            return mlist.size();
+//        }
+//
+//        @Override
+//        public String getSectionText(int position) {
+//            return null;
+//        }
+//
+//        public class ListViewHolder extends RecyclerView.ViewHolder{
+//
+//            TextView textView;
+//            View mainView;
+//
+//            public ListViewHolder(View itemView) {
+//                super(itemView);
+//                mainView = itemView;
+//                textView = (TextView) itemView.findViewById(R.id.text);
+//            }
+//        }
+//    }
+
 }
+
