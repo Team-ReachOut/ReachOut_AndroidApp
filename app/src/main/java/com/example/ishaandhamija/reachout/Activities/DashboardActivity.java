@@ -314,6 +314,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         getMenuInflater().inflate(R.menu.action_menu_items,menu);
         MenuItem editProfile = menu.findItem(R.id.editProfile);
         MenuItem signOut = menu.findItem(R.id.signOut);
+        MenuItem relatives = menu.findItem(R.id.relatives);
 
         editProfile.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -331,6 +332,14 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                     i.putExtra("sex", getIntent().getStringExtra("sex"));
                     startActivity(i);
 
+                return false;
+            }
+        });
+
+        relatives.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                startActivity(new Intent(DashboardActivity.this,RelativesActivity.class));
                 return false;
             }
         });

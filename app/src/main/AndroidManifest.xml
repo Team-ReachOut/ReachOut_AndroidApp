@@ -20,7 +20,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:theme">
-
         <activity
             android:name=".Activities.SplashScreenActivity"
             android:theme="@style/SplashTheme">
@@ -31,31 +30,29 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activities.HomeScreenActivity" />
-        <activity android:name=".Activities.LoginActivity"
+        <activity
+            android:name=".Activities.LoginActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity android:name=".Activities.SignUpActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
-        <activity android:name=".Activities.EditProfileActivity"
-            android:windowSoftInputMode="stateAlwaysHidden">
-
-        </activity>
-
-
+        <activity
+            android:name=".Activities.SignUpActivity"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".Activities.EditProfileActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD8GI_xAVxd78z7TnP6dQ8BgzuhkYlrz2E" />
 
-        <activity android:name=".Activities.DashboardActivity"
-            android:theme="@style/MyTheme"
-            android:label="">
-        </activity>
-
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat"/>
-
-        <activity android:name="com.desmond.squarecamera.CameraActivity"/>
-
+        <activity
+            android:name=".Activities.DashboardActivity"
+            android:label=""
+            android:theme="@style/MyTheme"></activity>
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
+        <activity android:name="com.desmond.squarecamera.CameraActivity" />
+        <activity android:name=".Activities.RelativesActivity"></activity>
     </application>
 
 </manifest>

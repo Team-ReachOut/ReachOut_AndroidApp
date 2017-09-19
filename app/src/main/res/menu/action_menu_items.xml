@@ -8,9 +8,15 @@
         android:id="@+id/editProfile"></item>
 
     <item
+        android:title="My Relatives"
+        app:showAsAction="never"
+        android:id="@+id/relatives"></item>
+
+    <item
         android:title="Sign Out"
         app:showAsAction="never"
         android:id="@+id/signOut"></item>
+
 
 
 </menu>
