@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:id="@+id/spinner2">
+                android:id="@+id/spinner1">
             </com.jaredrummler.materialspinner.MaterialSpinner>
         </LinearLayout>
 
@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:gravity="center"
-                android:id="@+id/spinner1">
+                android:id="@+id/spinner2">
             </com.jaredrummler.materialspinner.MaterialSpinner>
         </LinearLayout>
 

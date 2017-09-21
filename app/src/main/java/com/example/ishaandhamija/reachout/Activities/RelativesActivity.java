@@ -13,7 +13,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.ishaandhamija.reachout.Models.Relative;
 import com.example.ishaandhamija.reachout.R;
@@ -72,7 +71,7 @@ public class RelativesActivity extends AppCompatActivity implements View.OnClick
             spinner1.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
-                    Toast.makeText(RelativesActivity.this,"Clicked : "+item , Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(RelativesActivity.this,"Clicked : "+item , Toast.LENGTH_SHORT).show();
                 }
             });
             btnAdd = (Button) memberDialog.findViewById(R.id.btnAdd);
@@ -86,7 +85,7 @@ public class RelativesActivity extends AppCompatActivity implements View.OnClick
                     Relative relative = new Relative(mname,mage,mbGroup);
                     relatives.add(relative);
                     relativesAdapter.notifyDataSetChanged();
-                    Toast.makeText(RelativesActivity.this, "Added!!", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(RelativesActivity.this, "Added!!", Toast.LENGTH_SHORT).show();
                     memberDialog.dismiss();
                 }
             });

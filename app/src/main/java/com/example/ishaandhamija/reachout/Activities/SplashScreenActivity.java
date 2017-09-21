@@ -1,11 +1,16 @@
 package com.example.ishaandhamija.reachout.Activities;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,13 +32,23 @@ public class SplashScreenActivity extends AppCompatActivity {
     TextView title;
     String savedEmail, savedPassword;
     public static final String MyPREFERENCES = "MyPrefs" ;
-
+    public static final int REQ_CODE = 110;
     SharedPreferences sharedpreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+
+        int locPerm = ContextCompat.checkSelfPermission(SplashScreenActivity.this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (locPerm != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(SplashScreenActivity.this, new String[]{
+                    Manifest.permission.ACCESS_FINE_LOCATION
+            }, REQ_CODE);
+        }
+        else{
+            grantPerm();
+        }
 
         title = (TextView) findViewById(R.id.title);
 
@@ -45,9 +60,14 @@ public class SplashScreenActivity extends AppCompatActivity {
         savedEmail = sharedpreferences.getString("savedEmail", null);
         savedPassword = sharedpreferences.getString("savedPassword", null);
 
+
+    }
+
+    private void grantPerm() {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+
                 if (savedEmail == null && savedPassword == null) {
 
                     Intent intent = new Intent(SplashScreenActivity.this, HomeScreenActivity.class);
@@ -61,6 +81,22 @@ public class SplashScreenActivity extends AppCompatActivity {
                 }
             }
         }, 2000);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (requestCode == REQ_CODE) {
+            for (int result : grantResults) {
+                if (result == PackageManager.PERMISSION_DENIED) {
+                    Toast.makeText(this, "Permission Not Given", Toast.LENGTH_SHORT).show();
+                    finish();
+                    return;
+                }
+            }
+            grantPerm();
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private void fetchJson() {

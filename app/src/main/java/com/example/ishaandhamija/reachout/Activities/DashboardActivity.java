@@ -189,12 +189,12 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                 emergencyDialog.show();
                 spinner1 = (MaterialSpinner) emergencyDialog.findViewById(R.id.spinner1);
                 spinner2 = (MaterialSpinner) emergencyDialog.findViewById(R.id.spinner2);
-                spinner1.setItems("Ice Cream Sandwich", "Jelly Bean", "KitKat", "Lollipop", "Marshmallow");
-                spinner2.setItems("Ice Cream Sandwich", "Jelly Bean", "KitKat", "Lollipop", "Marshmallow");
+                spinner1.setItems("Ice", "Jelly Bean", "KitKat", "Lollipop", "Marshmallow");
+                spinner2.setItems("Cardiac Arrest", "Severe Accident", "Pneumonia", "Appendicitis", "Bone Fracture","Facial Trauma","Acid Attack","Respiratory failure","Electric Shock");
                 spinner1.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
-                        Toast.makeText(DashboardActivity.this,"Clicked : "+item , Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(DashboardActivity.this,"Clicked : "+item , Toast.LENGTH_SHORT).show();
                     }
                 });
                 btnSubmit = (Button) emergencyDialog.findViewById(R.id.btnSubmit);
@@ -205,13 +205,8 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                         emergencyDialog.dismiss();
                     }
                 });
-
-
-
-
             }
         });
-
     }
 
     @Override
@@ -448,53 +443,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         return (double) tmp / factor;
     }
 
-//    class MyAdapter extends RecyclerView.Adapter<MyAdapter.ListViewHolder> implements FastScroller.SectionIndexer{
-//
-//        Context context;
-//        ArrayList<String> mlist;
-//
-//        public MyAdapter(Context context, ArrayList<String> mlist) {
-//            this.context = context;
-//            this.mlist = mlist;
-//        }
-//
-//        @Override
-//        public MyAdapter.ListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-//            LayoutInflater li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//            View view  = li.inflate(R.layout.dialog_list_item,parent,false);
-//            return new ListViewHolder(view);
-//        }
-//
-//        @Override
-//        public void onBindViewHolder(MyAdapter.ListViewHolder holder, int position) {
-//
-//            String item = mlist.get(position);
-//            holder.textView.setText(item);
-//
-//        }
-//
-//        @Override
-//        public int getItemCount() {
-//            return mlist.size();
-//        }
-//
-//        @Override
-//        public String getSectionText(int position) {
-//            return null;
-//        }
-//
-//        public class ListViewHolder extends RecyclerView.ViewHolder{
-//
-//            TextView textView;
-//            View mainView;
-//
-//            public ListViewHolder(View itemView) {
-//                super(itemView);
-//                mainView = itemView;
-//                textView = (TextView) itemView.findViewById(R.id.text);
-//            }
-//        }
-//    }
 
 }
 

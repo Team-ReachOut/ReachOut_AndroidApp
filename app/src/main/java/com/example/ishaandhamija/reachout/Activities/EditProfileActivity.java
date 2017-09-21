@@ -2,8 +2,10 @@ package com.example.ishaandhamija.reachout.Activities;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -66,9 +68,12 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
     ProgressDialog progressDialog;
     CoordinatorLayout coordinatorLayout;
     ScrollView scrollView;
+    SharedPreferences sharedPreferences;
+
 
     public static final Integer INTENT_REQUEST_GET_IMAGES = 1001;
     public static final Integer REQUEST_CAMERA = 10001;
+    public static final String MyPREFERENCES = "MyPrefs";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +94,7 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         fab = (FloatingActionButton) findViewById(R.id.fab);
         progressDialog = new ProgressDialog(this);
         scrollView = (ScrollView) findViewById(R.id.scrollView);
-
-
+        sharedPreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         btn_save.setOnClickListener(this);
         fab.setOnClickListener(this);
@@ -101,17 +105,45 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
     private void showProfile() {
 
-        Intent i = getIntent();
-        String uname = i.getStringExtra("name");
-        String uage = i.getStringExtra("age");
-        String ubloodgroup = i.getStringExtra("bloodgroup");
-        String uaddress = i.getStringExtra("address");
-        String ucontactno = i.getStringExtra("contactno");
-        String uemail = i.getStringExtra("email");
-        String upassword = i.getStringExtra("password");
-        String usex = i.getStringExtra("sex");
-        String imageUrl = "http://192.168.43.202:5199/api/uploads/"+uemail+".jpg";
+        String uname="";
+        String uage="";
+        String ubloodgroup="";
+        String uaddress="";
+        String ucontactno="";
+        String uemail="";
+        String upassword="";
+        String usex="";
+        String imageUrl = null;
 
+        Intent i = getIntent();
+        if (i.getStringExtra("email")!=null) {
+            uname = i.getStringExtra("name");
+            uage = i.getStringExtra("age");
+            ubloodgroup = i.getStringExtra("bloodgroup");
+            uaddress = i.getStringExtra("address");
+            ucontactno = i.getStringExtra("contactno");
+            uemail = i.getStringExtra("email");
+            upassword = i.getStringExtra("password");
+            usex = i.getStringExtra("sex");
+            Log.d(TAG, "showProfile: Intent : "+uemail);
+            imageUrl = "http://192.168.43.202:5199/api/uploads/" + uemail + ".jpg";
+        }
+        else
+        {
+            uname = sharedPreferences.getString("cname"," ");
+            uage = sharedPreferences.getString("cage"," ");
+            ubloodgroup = sharedPreferences.getString("cbloodgroup"," ");
+            uaddress = sharedPreferences.getString("caddress"," ");
+            ucontactno = sharedPreferences.getString("cphonenumber"," ");
+            uemail = sharedPreferences.getString("cemail"," ");
+            upassword = sharedPreferences.getString("cpwd"," ");
+            usex = sharedPreferences.getString("csex"," ");
+            Log.d(TAG, "showProfile: Shared : "+uemail);
+            imageUrl = "http://192.168.43.202:5199/api/uploads/" + uemail + ".jpg";
+
+        }
+
+        Log.d(TAG, "showProfile: Picasso : "+imageUrl);
         Picasso
                 .with(this)
                 .load(imageUrl)
@@ -129,14 +161,11 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
         email.setEnabled(false);
         email.setTextColor(Color.GRAY);
         password.setText(upassword);
-
-         if(usex.equals("Male")){
+        if (usex.equals("Male")) {
             radioGroup.check(R.id.male);
-        }
-        else if(usex.equals("Female")){
+        } else if (usex.equals("Female")) {
             radioGroup.check(R.id.female);
-        }
-        else{
+        } else {
             radioGroup.check(R.id.other);
         }
 
@@ -277,9 +306,6 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
 
     private void saveChangedInfo() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
-
-
-
         JSONObject json = new JSONObject();
         try {
             json.put("name", name.getText().toString());
@@ -306,6 +332,16 @@ public class EditProfileActivity extends AppCompatActivity implements View.OnCli
                         try {
                             progressDialog.dismiss();
                             Toast.makeText(EditProfileActivity.this, "Profile Updated", Toast.LENGTH_SHORT).show();
+                            SharedPreferences.Editor editor = sharedPreferences.edit();
+                            editor.putString("cname",name.getText().toString());
+                            editor.putString("cbloodgroup",bloodgroup.getText().toString());
+                            editor.putString("cemail",email.getText().toString());
+                            editor.putString("cphonenumber",contactno.getText().toString());
+                            editor.putString("caddress",address.getText().toString());
+                            editor.putString("cage",age.getText().toString());
+                            editor.putString("csex",((RadioButton) findViewById(radioGroup.getCheckedRadioButtonId())).getText().toString());
+                            editor.putString("cpwd",password.getText().toString());
+                            editor.commit();
                             Intent i = new Intent(EditProfileActivity.this,DashboardActivity.class);
                             startActivity(i);
                         } catch (Exception e) {

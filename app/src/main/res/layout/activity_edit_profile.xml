@@ -43,15 +43,11 @@
                    <android.support.design.widget.FloatingActionButton
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
-                       android:layout_gravity="bottom|center"
+                       android:layout_gravity="bottom|end"
                        android:background="@android:color/black"
-                       android:layout_marginLeft="90dp"
                        app:backgroundTint="#6495ED"
                        android:src="@drawable/photocamera"
                        android:id="@+id/fab"/>
-
-
-
                </FrameLayout>
            </RelativeLayout>
 
