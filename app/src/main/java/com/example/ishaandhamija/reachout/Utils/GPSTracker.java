@@ -2,7 +2,6 @@ package com.example.ishaandhamija.reachout.Utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,12 +12,10 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.example.ishaandhamija.reachout.Activities.DashboardActivity;
-import com.example.ishaandhamija.reachout.Interfaces.GetLocation;
 
 /**
  * Created by ishaandhamija on 17/08/17.
@@ -49,8 +46,6 @@ public class GPSTracker extends Service implements LocationListener {
     private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
 
     protected LocationManager locationManager;
-
-    ProgressDialog progressDialog;
 
     public GPSTracker(Context context) {
         this.mContext = context;
@@ -97,15 +92,8 @@ public class GPSTracker extends Service implements LocationListener {
                             longitude = location.getLongitude();
                             DashboardActivity.longitude = location.getLongitude();
                             DashboardActivity.getLocation.onSuccess();
-                            progressDialog.dismiss();
 
                             markerPut = true;
-                        }
-                        else{
-                            progressDialog = new ProgressDialog(mContext);
-                            progressDialog.setMessage("Fetching Location...");
-                            progressDialog.show();
-                            progressDialog.setCanceledOnTouchOutside(false);
                         }
                     }
                 }
@@ -140,10 +128,6 @@ public class GPSTracker extends Service implements LocationListener {
     public void onLocationChanged(Location location) {
 
         if (!markerPut) {
-
-            if (progressDialog != null) {
-                progressDialog.dismiss();
-            }
 
             this.location = location;
             latitude = location.getLatitude();
