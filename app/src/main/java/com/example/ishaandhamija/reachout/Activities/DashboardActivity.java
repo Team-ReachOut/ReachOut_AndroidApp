@@ -130,7 +130,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                                         Double hospitalLat = Double.parseDouble(hospitalObject.get("lat").toString());
                                         Double hospitalLon = Double.parseDouble(hospitalObject.get("lon").toString());
 
-                                        Double d = distance(latitude, longitude, hospitalLat, hospitalLon, 'M');
+                                        Double d = distance(latitude, longitude, hospitalLat, hospitalLon, 'K');
 
                                         if (d < 5000.0){
                                             hospitalList.add(new Hospital(hospitalObject.getString("name"), hospitalObject.getString("email"),
@@ -238,7 +238,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                 for (int i=0;i<latlonList.size();i++){
                     Marker marker = map.addMarker(new MarkerOptions()
                             .position(new LatLng(Double.parseDouble(hospitalList.get(i).getLat()), Double.parseDouble(hospitalList.get(i).getLon())))
-                            .title(hospitalList.get(i).getName())
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.placeholder)));
 
                     myMarkers.add(marker);
@@ -264,9 +263,8 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
                         Double dist = distance(latitude, latitude,
                                 Double.parseDouble(hospitalList.get(i).getLat()),
-                                Double.parseDouble(hospitalList.get(i).getLon()), 'M');
+                                Double.parseDouble(hospitalList.get(i).getLon()), 'K');
 
-                        dist = milesTokm(dist);
                         dist = round(dist, 2);
 
                         hospitalDistance.setText(dist.toString() + " km");
@@ -377,9 +375,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
             gps = new GPSTracker(DashboardActivity.this);
 
             if (gps.getIsGPSTrackingEnabled()){
-//                latitude = gps.getLatitude();
-//                longitude = gps.getLongitude();
-//                getLocation.onSuccess();
                 gpsIsEnabled = true;
                 gps.getLocation();
             }
@@ -413,31 +408,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
     private double rad2deg(double rad) {
         return (rad * 180.0 / Math.PI);
-    }
-
-//    private double distance(double lat1, double lon1, double lat2, double lon2) {
-//        double theta = lon1 - lon2;
-//        double dist = Math.sin(deg2rad(lat1))
-//                * Math.sin(deg2rad(lat2))
-//                + Math.cos(deg2rad(lat1))
-//                * Math.cos(deg2rad(lat2))
-//                * Math.cos(deg2rad(theta));
-//        dist = Math.acos(dist);
-//        dist = rad2deg(dist);
-//        dist = dist * 60 * 1.1515;
-//        return (dist);
-//    }
-
-//    private double deg2rad(double deg) {
-//        return (deg * Math.PI / 180.0);
-//    }
-//
-//    private double rad2deg(double rad) {
-//        return (rad * 180.0 / Math.PI);
-//    }
-
-    private double milesTokm(double distanceInMiles) {
-        return distanceInMiles / 1000;
     }
 
     public static double round(double value, int places) {
