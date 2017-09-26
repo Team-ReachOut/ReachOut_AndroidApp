@@ -21,6 +21,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.ishaandhamija.reachout.Models.Relative;
@@ -28,10 +29,13 @@ import com.example.ishaandhamija.reachout.R;
 import com.example.ishaandhamija.reachout.Utils.RelativesAdapter;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class RelativesActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -41,9 +45,10 @@ public class RelativesActivity extends AppCompatActivity implements View.OnClick
     EditText name,age;
     Button btnAdd;
     ArrayList<Relative> relatives;
+    ArrayList<String> allRelatives;
     RelativesAdapter relativesAdapter;
     public static final String TAG = "RelativesActivity";
-    SharedPreferences sharedPreferences;
+    SharedPreferences sharedpreferences;
     Dialog memberDialog;
     public static final String MyPREFERENCES = "MyPrefs";
 
@@ -56,16 +61,21 @@ public class RelativesActivity extends AppCompatActivity implements View.OnClick
 
         mList = (RecyclerView) findViewById(R.id.members);
         fab = (FloatingActionButton) findViewById(R.id.addMember);
-
+        sharedpreferences = getSharedPreferences(MyPREFERENCES,MODE_PRIVATE);
         relatives = new ArrayList<>();
+        allRelatives = new ArrayList<>();
+        showAllRelatives();
         relativesAdapter = new RelativesAdapter(this,relatives);
         mList.setLayoutManager(new LinearLayoutManager(this));
         mList.addItemDecoration(new DividerItemDecoration(RelativesActivity.this,LinearLayoutManager.VERTICAL));
         mList.setAdapter(relativesAdapter);
-        sharedPreferences = getSharedPreferences(MyPREFERENCES,MODE_PRIVATE);
+
         fab.setOnClickListener(this);
 
     }
+
+
+
 
     @Override
     public void onClick(View view) {
@@ -89,7 +99,7 @@ public class RelativesActivity extends AppCompatActivity implements View.OnClick
             spinner1.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
-//                    Toast.makeText(RelativesActivity.this,"Clicked : "+item , Toast.LENGTH_SHORT).show();
+
                 }
             });
             btnAdd = (Button) memberDialog.findViewById(R.id.btnAdd);
@@ -111,8 +121,8 @@ public class RelativesActivity extends AppCompatActivity implements View.OnClick
     }
     private void addRelative(String mname,String mage,String mbGroup) {
 
-        String useremail = sharedPreferences.getString("savedEmail"," ");
-        String userpassword = sharedPreferences.getString("savedPassword"," ");
+        String useremail = sharedpreferences.getString("savedEmail"," ");
+        String userpassword = sharedpreferences.getString("savedPassword"," ");
         JSONObject json = new JSONObject();
         try {
             json.put("relativeName", mname);
@@ -149,6 +159,54 @@ public class RelativesActivity extends AppCompatActivity implements View.OnClick
         RequestQueue requestQueue = Volley.newRequestQueue(RelativesActivity.this);
         requestQueue.add(jsonObjectRequest);
     }
+
+    private void showAllRelatives() {
+        String username = sharedpreferences.getString("savedEmail"," ");
+        final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                "http://192.168.43.202:5199/api/showallrel/"+username,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject relObject = null;
+                            try {
+                                relObject = response.getJSONObject(i);
+                                String relName = relObject.getString("relativeName");
+                                String relAge = relObject.getString("relativeAge");
+                                String relBloodGroup = relObject.getString("relativeBloodgroup");
+                                Relative relative  = new Relative(relName,relAge,relBloodGroup);
+                                relatives.add(relative);
+                                allRelatives.add(relName);
+                                relativesAdapter.notifyDataSetChanged();
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
+
+                        }
+                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                        Set<String> set = new HashSet<String>();
+                        set.addAll(allRelatives);
+                        editor.putStringSet("RelativesNameSet", set);
+                        editor.commit();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }
+        );
+
+        RequestQueue requestQueue = Volley.newRequestQueue(RelativesActivity.this);
+        requestQueue.add(jsonArrayRequest);
+    }
+
+
+
+
 
     @Override
     public void onBackPressed() {

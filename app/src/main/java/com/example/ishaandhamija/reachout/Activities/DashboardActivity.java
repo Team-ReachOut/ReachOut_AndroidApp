@@ -48,6 +48,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public class DashboardActivity extends AppCompatActivity implements OnMapReadyCallback{
 
@@ -82,6 +83,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
     public static final String TAG = "Hospitals";
     public static final String MyPREFERENCES = "MyPrefs" ;
+    private ArrayList<String> allRelatives;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +93,8 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         getSupportActionBar().setTitle("");
+
+        allRelatives = new ArrayList<>();
 
         hospitalName = (TextView) findViewById(R.id.hospitalName);
         hospitalAddress = (TextView) findViewById(R.id.hospitalAddress);
@@ -107,7 +111,12 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         members = new ArrayList<>();
         emergencies = new ArrayList<>();
 
+
+
+
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+
+
 
         gps = new GPSTracker(DashboardActivity.this);
 
@@ -192,8 +201,13 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                 emergencyDialog.show();
                 spinner1 = (MaterialSpinner) emergencyDialog.findViewById(R.id.spinner1);
                 spinner2 = (MaterialSpinner) emergencyDialog.findViewById(R.id.spinner2);
-                spinner1.setItems("Ice", "Jelly Bean", "KitKat", "Lollipop", "Marshmallow");
-                spinner2.setItems("Cardiac Arrest", "Severe Accident", "Pneumonia", "Appendicitis", "Bone Fracture","Facial Trauma","Acid Attack","Respiratory failure","Electric Shock");
+                Set<String> set = sharedpreferences.getStringSet("RelativesNameSet", null);
+                allRelatives.add(" ");
+                for (String str : set)
+                    allRelatives.add(str);
+                spinner1.setItems(allRelatives);
+                spinner2.setItems("Cardiac Arrest", "Severe Accident", "Pneumonia", "Appendicitis", "Bone Fracture","Facial Trauma","Acid Attack","Respiratory failure","Electric Shock","Other");
+
                 spinner1.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(MaterialSpinner view, int position, long id, Object item) {
@@ -204,7 +218,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                 btnSubmit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(DashboardActivity.this, "Response Recorded!!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DashboardActivity.this, "Request Initiated!!", Toast.LENGTH_SHORT).show();
                         emergencyDialog.dismiss();
                     }
                 });
@@ -417,6 +431,8 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         long tmp = Math.round(value);
         return (double) tmp / factor;
     }
+
+
 
 
 }
