@@ -130,15 +130,12 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                                         Double hospitalLat = Double.parseDouble(hospitalObject.get("lat").toString());
                                         Double hospitalLon = Double.parseDouble(hospitalObject.get("lon").toString());
 
-                                        Double d = distance(latitude, longitude, hospitalLat, hospitalLon, 'K');
+                                        hospitalList.add(new Hospital(hospitalObject.getString("name"), hospitalObject.getString("email"),
+                                                hospitalObject.getLong("phonenumber"), hospitalObject.getString("address"),
+                                                hospitalObject.getString("password"), hospitalObject.getString("driver_name"),
+                                                hospitalObject.getLong("driver_pnumber"), hospitalObject.getString("ambulance"),
+                                                hospitalObject.getString("lat"), hospitalObject.getString("lon")));
 
-                                        if (d < 5000.0){
-                                            hospitalList.add(new Hospital(hospitalObject.getString("name"), hospitalObject.getString("email"),
-                                                    hospitalObject.getLong("phonenumber"), hospitalObject.getString("address"),
-                                                    hospitalObject.getString("password"), hospitalObject.getString("driver_name"),
-                                                    hospitalObject.getLong("driver_pnumber"), hospitalObject.getString("ambulance"),
-                                                    hospitalObject.getString("lat"), hospitalObject.getString("lon")));
-                                        }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -261,7 +258,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                         hospitalName.setText(hospitalList.get(i).getName());
                         hospitalAddress.setText(hospitalList.get(i).getAddress());
 
-                        Double dist = distance(latitude, latitude,
+                        Double dist = distance(latitude, longitude,
                                 Double.parseDouble(hospitalList.get(i).getLat()),
                                 Double.parseDouble(hospitalList.get(i).getLon()), 'K');
 
@@ -270,8 +267,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                         hospitalDistance.setText(dist.toString() + " km");
 
                         hospitalInfo.setVisibility(View.VISIBLE);
-
-                        Log.d(TAG, "onMarkerClick: " + dist.toString());
 
                         return true;
                     }
@@ -387,27 +382,32 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         }
     }
 
-    private double distance(double lat1, double lon1, double lat2, double lon2, char unit) {
+    public static final double distance(double lat1, double lon1, double lat2, double lon2, char unit)
+    {
         double theta = lon1 - lon2;
-        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1))
-                * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
         dist = Math.acos(dist);
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515;
+
         if (unit == 'K') {
             dist = dist * 1.609344;
-        } else if (unit == 'N') {
+        }
+        else if (unit == 'N') {
             dist = dist * 0.8684;
         }
+
         return (dist);
     }
 
-    private double deg2rad(double deg) {
+    private static final double deg2rad(double deg)
+    {
         return (deg * Math.PI / 180.0);
     }
 
-    private double rad2deg(double rad) {
-        return (rad * 180.0 / Math.PI);
+    private static final double rad2deg(double rad)
+    {
+        return (rad * 180 / Math.PI);
     }
 
     public static double round(double value, int places) {
