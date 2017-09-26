@@ -1,6 +1,7 @@
 package com.example.ishaandhamija.reachout.Activities;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -70,7 +71,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     MaterialSpinner spinner1,spinner2;
     Button btnSubmit;
 
-
+    ProgressDialog progressDialog;
 
     ArrayList<Marker> myMarkers;
     Marker myMarker;
@@ -97,7 +98,10 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         hospitalInfo = (CardView) findViewById(R.id.hospitalInfo);
         emegencyBtn = (FloatingActionButton) findViewById(R.id.emergencyBtn);
 
-
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Fetching your location...");
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.show();
 
         hospitalList = new ArrayList<>();
         members = new ArrayList<>();
@@ -239,6 +243,8 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
                     myMarkers.add(marker);
                 }
+
+                progressDialog.dismiss();
             }
         };
 
