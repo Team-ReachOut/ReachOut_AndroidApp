@@ -175,7 +175,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         emegencyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(DashboardActivity.this, "Emergency Btn", Toast.LENGTH_SHORT).show();
                 final Dialog emergencyDialog = new Dialog(DashboardActivity.this);
                 emergencyDialog.getWindow().setBackgroundDrawable(null);
                 emergencyDialog.setContentView(R.layout.emergency_dialog);
@@ -186,7 +185,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                 lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
                 window.setAttributes(lp);
                 lp.gravity = Gravity.CENTER;
-                emergencyDialog.setCancelable(false);
+                emergencyDialog.setCancelable(true);
                 emergencyDialog.show();
                 spinner1 = (MaterialSpinner) emergencyDialog.findViewById(R.id.spinner1);
                 spinner2 = (MaterialSpinner) emergencyDialog.findViewById(R.id.spinner2);
