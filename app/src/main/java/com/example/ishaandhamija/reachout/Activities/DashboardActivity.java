@@ -132,9 +132,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
                                         hospitalList.add(new Hospital(hospitalObject.getString("name"), hospitalObject.getString("email"),
                                                 hospitalObject.getLong("phonenumber"), hospitalObject.getString("address"),
-                                                hospitalObject.getString("password"), hospitalObject.getString("driver_name"),
-                                                hospitalObject.getLong("driver_pnumber"), hospitalObject.getString("ambulance"),
-                                                hospitalObject.getString("lat"), hospitalObject.getString("lon")));
+                                                hospitalObject.getString("password"), hospitalObject.getString("lat"), hospitalObject.getString("lon")));
 
                                     } catch (JSONException e) {
                                         e.printStackTrace();
