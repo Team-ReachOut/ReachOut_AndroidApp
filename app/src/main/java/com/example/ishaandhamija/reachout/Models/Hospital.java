@@ -7,25 +7,17 @@ package com.example.ishaandhamija.reachout.Models;
 public class Hospital {
 
     String name;
-    String email;
-    Long phonenumber;
+//    String email;
+    String phonenumber;
     String address;
-    String password;
-    String driver_name;
-    Long drive_pnumber;
-    String ambulance;
-    String lat;
-    String lon;
+//    String password;
+    Double lat;
+    Double lon;
 
-    public Hospital(String name, String email, Long phonenumber, String address, String password, String driver_name, Long drive_pnumber, String ambulance, String lat, String lon) {
+    public Hospital(String name, String phonenumber, String address, Double lat, Double lon) {
         this.name = name;
-        this.email = email;
         this.phonenumber = phonenumber;
         this.address = address;
-        this.password = password;
-        this.driver_name = driver_name;
-        this.drive_pnumber = drive_pnumber;
-        this.ambulance = ambulance;
         this.lat = lat;
         this.lon = lon;
     }
@@ -34,11 +26,7 @@ public class Hospital {
         return name;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public Long getPhonenumber() {
+    public String getPhonenumber() {
         return phonenumber;
     }
 
@@ -46,27 +34,11 @@ public class Hospital {
         return address;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public String getDriver_name() {
-        return driver_name;
-    }
-
-    public Long getDrive_pnumber() {
-        return drive_pnumber;
-    }
-
-    public String getAmbulance() {
-        return ambulance;
-    }
-
-    public String getLat() {
+    public Double getLat() {
         return lat;
     }
 
-    public String getLon() {
+    public Double getLon() {
         return lon;
     }
 }

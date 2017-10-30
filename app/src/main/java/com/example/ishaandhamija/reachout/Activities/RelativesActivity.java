@@ -113,7 +113,13 @@ public class RelativesActivity extends AppCompatActivity implements View.OnClick
                     Relative relative = new Relative(mname,mage,mbGroup);
                     relatives.add(relative);
                     relativesAdapter.notifyDataSetChanged();
+                    SharedPreferences.Editor editor = sharedpreferences.edit();
+                    Set<String> set = new HashSet<String>();
+                    set.addAll(allRelatives);
+                    editor.putStringSet("RelativesNameSet", set);
+                    editor.commit();
                     addRelative(mname,mage,mbGroup);
+
                     memberDialog.dismiss();
                 }
             });
@@ -135,8 +141,8 @@ public class RelativesActivity extends AppCompatActivity implements View.OnClick
         }
 
         final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://192.168.43.202:5199/api/updateRelative",
-//        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://harshgoyal.xyz:5199/api/addone",
-//        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "https://reach-out-server.herokuapp.com/api/addone",
+//        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "http://harshgoyal.xyz:5199/api/updateRelative",
+//        final JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, "https://reach-out-server.herokuapp.com/api/updateRelative",
                 json,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -151,17 +157,18 @@ public class RelativesActivity extends AppCompatActivity implements View.OnClick
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(RelativesActivity.this, "Failed to Add!!", Toast.LENGTH_SHORT).show();
                         Log.d(TAG, "onErrorResponse: " + error);
                         error.printStackTrace();
                     }
                 });
         RequestQueue requestQueue = Volley.newRequestQueue(RelativesActivity.this);
         requestQueue.add(jsonObjectRequest);
+
     }
 
     private void showAllRelatives() {
         String username = sharedpreferences.getString("savedEmail"," ");
+        Log.d("checkkk", "showAllRelatives: " + username);
         final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 "http://192.168.43.202:5199/api/showallrel/"+username,
                 new Response.Listener<JSONArray>() {
@@ -203,10 +210,6 @@ public class RelativesActivity extends AppCompatActivity implements View.OnClick
         RequestQueue requestQueue = Volley.newRequestQueue(RelativesActivity.this);
         requestQueue.add(jsonArrayRequest);
     }
-
-
-
-
 
     @Override
     public void onBackPressed() {

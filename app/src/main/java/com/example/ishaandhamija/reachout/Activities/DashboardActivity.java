@@ -30,6 +30,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.ishaandhamija.reachout.Interfaces.GetHospitals;
 import com.example.ishaandhamija.reachout.Interfaces.GetLocation;
 import com.example.ishaandhamija.reachout.Models.Hospital;
+import com.example.ishaandhamija.reachout.Models.Relative;
 import com.example.ishaandhamija.reachout.R;
 import com.example.ishaandhamija.reachout.Utils.GPSTracker;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -48,7 +49,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
+
+import static com.example.ishaandhamija.reachout.R.id.map;
 
 public class DashboardActivity extends AppCompatActivity implements OnMapReadyCallback{
 
@@ -93,8 +97,9 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         getSupportActionBar().setTitle("");
-
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         allRelatives = new ArrayList<>();
+        showAllRelatives();
 
         hospitalName = (TextView) findViewById(R.id.hospitalName);
         hospitalAddress = (TextView) findViewById(R.id.hospitalAddress);
@@ -111,13 +116,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         members = new ArrayList<>();
         emergencies = new ArrayList<>();
 
-
-
-
-        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-
-
-
         gps = new GPSTracker(DashboardActivity.this);
 
         getLocation = new GetLocation() {
@@ -126,7 +124,8 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                 final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
 //                "http://harshgoyal.xyz:5199/api/showall",
 //                "https://reach-out-server.herokuapp.com/api/showall",
-                        "http://192.168.43.202:5199/api/showall",
+//                        "http://192.168.43.202:5199/api/showall",
+                        "http://192.168.43.202:5199/api/hospitals",
 
                         new Response.Listener<JSONArray>() {
                             @Override
@@ -136,18 +135,12 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                                     JSONObject hospitalObject = null;
                                     try {
                                         hospitalObject = response.getJSONObject(i);
-                                        Double hospitalLat = Double.parseDouble(hospitalObject.get("lat").toString());
-                                        Double hospitalLon = Double.parseDouble(hospitalObject.get("lon").toString());
+                                        Double hospitalLat = hospitalObject.getDouble("lat");
+                                        Double hospitalLon = hospitalObject.getDouble("lng");
 
-                                        Double d = distance(latitude, longitude, hospitalLat, hospitalLon, 'K');
+                                        hospitalList.add(new Hospital(hospitalObject.getString("name"),
+                                                hospitalObject.getString("phone1"), hospitalObject.getString("address"), hospitalObject.getDouble("lat"), hospitalObject.getDouble("lng")));
 
-                                        if (d < 5000.0){
-                                            hospitalList.add(new Hospital(hospitalObject.getString("name"), hospitalObject.getString("email"),
-                                                    hospitalObject.getLong("phonenumber"), hospitalObject.getString("address"),
-                                                    hospitalObject.getString("password"), hospitalObject.getString("driver_name"),
-                                                    hospitalObject.getLong("driver_pnumber"), hospitalObject.getString("ambulance"),
-                                                    hospitalObject.getString("lat"), hospitalObject.getString("lon")));
-                                        }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
@@ -171,7 +164,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         };
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(map);
         mapFragment.getMapAsync(this);
 
         hospitalList.clear();
@@ -201,10 +194,10 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                 emergencyDialog.show();
                 spinner1 = (MaterialSpinner) emergencyDialog.findViewById(R.id.spinner1);
                 spinner2 = (MaterialSpinner) emergencyDialog.findViewById(R.id.spinner2);
-                Set<String> set = sharedpreferences.getStringSet("RelativesNameSet", null);
-                allRelatives.add(" ");
-                for (String str : set)
-                    allRelatives.add(str);
+//                Set<String> set = sharedpreferences.getStringSet("RelativesNameSet", null);
+//                set.add("Relatives");
+//                for (String str : set)
+//                    allRelatives.add(str);
                 spinner1.setItems(allRelatives);
                 spinner2.setItems("Cardiac Arrest", "Severe Accident", "Pneumonia", "Appendicitis", "Bone Fracture","Facial Trauma","Acid Attack","Respiratory failure","Electric Shock","Other");
 
@@ -240,7 +233,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                         .title("My Location")
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.bluedot)));
 
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 12.0f));
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15.0f));
 
                 map.addCircle(new CircleOptions()
                         .center(new LatLng(latitude, longitude))
@@ -249,8 +242,9 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                         .fillColor(getTransparentColor(Color.parseColor("#4682b4"))));
 
                 for (int i=0;i<latlonList.size();i++){
+
                     Marker marker = map.addMarker(new MarkerOptions()
-                            .position(new LatLng(Double.parseDouble(hospitalList.get(i).getLat()), Double.parseDouble(hospitalList.get(i).getLon())))
+                            .position(new LatLng(hospitalList.get(i).getLat(), hospitalList.get(i).getLon()))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.placeholder)));
 
                     myMarkers.add(marker);
@@ -274,17 +268,15 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                         hospitalName.setText(hospitalList.get(i).getName());
                         hospitalAddress.setText(hospitalList.get(i).getAddress());
 
-                        Double dist = distance(latitude, latitude,
-                                Double.parseDouble(hospitalList.get(i).getLat()),
-                                Double.parseDouble(hospitalList.get(i).getLon()), 'K');
+                        Double dist = distance(latitude, longitude,
+                                hospitalList.get(i).getLat(),
+                                hospitalList.get(i).getLon(), 'K');
 
                         dist = round(dist, 2);
 
                         hospitalDistance.setText(dist.toString() + " km");
 
                         hospitalInfo.setVisibility(View.VISIBLE);
-
-                        Log.d(TAG, "onMarkerClick: " + dist.toString());
 
                         return true;
                     }
@@ -308,7 +300,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     protected void onResume() {
         super.onResume();
-
+        showAllRelatives();
     }
 
     @Override
@@ -400,27 +392,32 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         }
     }
 
-    private double distance(double lat1, double lon1, double lat2, double lon2, char unit) {
+    public static final double distance(double lat1, double lon1, double lat2, double lon2, char unit)
+    {
         double theta = lon1 - lon2;
-        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1))
-                * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
+        double dist = Math.sin(deg2rad(lat1)) * Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.cos(deg2rad(theta));
         dist = Math.acos(dist);
         dist = rad2deg(dist);
         dist = dist * 60 * 1.1515;
+
         if (unit == 'K') {
             dist = dist * 1.609344;
-        } else if (unit == 'N') {
+        }
+        else if (unit == 'N') {
             dist = dist * 0.8684;
         }
+
         return (dist);
     }
 
-    private double deg2rad(double deg) {
+    private static final double deg2rad(double deg)
+    {
         return (deg * Math.PI / 180.0);
     }
 
-    private double rad2deg(double rad) {
-        return (rad * 180.0 / Math.PI);
+    private static final double rad2deg(double rad)
+    {
+        return (rad * 180 / Math.PI);
     }
 
     public static double round(double value, int places) {
@@ -432,8 +429,45 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         return (double) tmp / factor;
     }
 
+    private void showAllRelatives() {
+        String username = sharedpreferences.getString("savedEmail", null);
+        final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                "http://192.168.43.202:5199/api/showallrel/"+username,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        allRelatives.clear();
+                        for (int i = 0; i < response.length(); i++) {
+                            JSONObject relObject = null;
+                            try {
+                                relObject = response.getJSONObject(i);
+                                String relName = relObject.getString("relativeName");
+                                String relAge = relObject.getString("relativeAge");
+                                String relBloodGroup = relObject.getString("relativeBloodgroup");
+                                Relative relative  = new Relative(relName,relAge,relBloodGroup);
+                                allRelatives.add(relName);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
 
 
+                        }
+                        SharedPreferences.Editor editor = sharedpreferences.edit();
+                        Set<String> set = new HashSet<String>();
+                        set.addAll(allRelatives);
+                        editor.putStringSet("RelativesNameSet", set);
+                        editor.commit();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
 
+                    }
+                }
+        );
+
+        RequestQueue requestQueue = Volley.newRequestQueue(DashboardActivity.this);
+        requestQueue.add(jsonArrayRequest);
+    }
 }
-
