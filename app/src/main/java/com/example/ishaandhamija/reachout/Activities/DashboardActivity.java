@@ -466,7 +466,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                     }
                 }
         );
-
         RequestQueue requestQueue = Volley.newRequestQueue(DashboardActivity.this);
         requestQueue.add(jsonArrayRequest);
     }
