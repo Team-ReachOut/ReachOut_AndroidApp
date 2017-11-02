@@ -45,7 +45,7 @@
                        android:layout_height="wrap_content"
                        android:layout_gravity="bottom|end"
                        android:background="@android:color/black"
-                       app:backgroundTint="#6495ED"
+                       app:backgroundTint="@color/colorAccent"
                        android:src="@drawable/photocamera"
                        android:id="@+id/fab"/>
                </FrameLayout>
@@ -222,7 +222,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:background="#6495ED"
+                    android:background="@color/colorPrimary"
                     android:text="SAVE CHANGES"
                     android:textColor="@android:color/white"
                     android:textStyle="bold" />

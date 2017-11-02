@@ -61,12 +61,13 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     public static Double latitude, longitude;
 
     ArrayList<Hospital> hospitalList;
+    ArrayList<String> services;
 
     GetHospitals getHospitals;
 
     TextView hospitalName, hospitalAddress, hospitalDistance;
     CardView hospitalInfo;
-    FloatingActionButton emegencyBtn;
+    FloatingActionButton emegencyBtn,btnFilter;
 
     SharedPreferences sharedpreferences;
 
@@ -99,13 +100,16 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         getSupportActionBar().setTitle("");
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
         allRelatives = new ArrayList<>();
+        services = new ArrayList<>();
         showAllRelatives();
+        getMedicalServices();
 
         hospitalName = (TextView) findViewById(R.id.hospitalName);
         hospitalAddress = (TextView) findViewById(R.id.hospitalAddress);
         hospitalDistance = (TextView) findViewById(R.id.hospitalDistance);
         hospitalInfo = (CardView) findViewById(R.id.hospitalInfo);
         emegencyBtn = (FloatingActionButton) findViewById(R.id.emergencyBtn);
+        btnFilter = (FloatingActionButton) findViewById(R.id.filter);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Fetching your location...");
@@ -137,9 +141,10 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                                         hospitalObject = response.getJSONObject(i);
                                         Double hospitalLat = hospitalObject.getDouble("lat");
                                         Double hospitalLon = hospitalObject.getDouble("lng");
+                                        Log.d(TAG, "Speciality: "+hospitalObject.getString("speciality"));
 
                                         hospitalList.add(new Hospital(hospitalObject.getString("name"),
-                                                hospitalObject.getString("phone1"), hospitalObject.getString("address"), hospitalObject.getDouble("lat"), hospitalObject.getDouble("lng")));
+                                                hospitalObject.getString("phone1"), hospitalObject.getString("address"),hospitalObject.getString("speciality"), hospitalObject.getDouble("lat"), hospitalObject.getDouble("lng")));
 
                                     } catch (JSONException e) {
                                         e.printStackTrace();
@@ -217,7 +222,19 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                 });
             }
         });
+
+        btnFilter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(DashboardActivity.this,FilterActivity.class);
+                i.putStringArrayListExtra("services",services);
+                startActivity(i);
+            }
+        });
     }
+
+
+
 
     @Override
     public void onMapReady(final GoogleMap map) {
@@ -467,6 +484,32 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                 }
         );
 
+        RequestQueue requestQueue = Volley.newRequestQueue(DashboardActivity.this);
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    private void getMedicalServices() {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest("http://192.168.43.202:5199/api/unique",
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("services", "onResponse: " + response+"\t"+response.length());
+                        for (int i=0;i<response.length();++i){
+                            try {
+                                Log.d(TAG, "onResponse: "+response.getString(i));
+                                services.add(response.getString(i));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                });
         RequestQueue requestQueue = Volley.newRequestQueue(DashboardActivity.this);
         requestQueue.add(jsonArrayRequest);
     }

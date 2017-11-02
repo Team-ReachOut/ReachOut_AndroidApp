@@ -52,8 +52,6 @@ public class RelativesActivity extends AppCompatActivity implements View.OnClick
     Dialog memberDialog;
     public static final String MyPREFERENCES = "MyPrefs";
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

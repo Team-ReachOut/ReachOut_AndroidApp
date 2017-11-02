@@ -20,6 +20,17 @@
         android:layout_marginLeft="16sp"
         android:layout_marginRight="16sp"
         android:layout_marginTop="16sp"
+        android:layout_marginBottom="250sp"
+        android:id="@+id/filter"
+        android:background="@color/colorAccent"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginLeft="16sp"
+        android:layout_marginRight="16sp"
+        android:layout_marginTop="16sp"
         android:layout_marginBottom="170sp"
         android:id="@+id/emergencyBtn"
         android:background="@color/colorAccent"
