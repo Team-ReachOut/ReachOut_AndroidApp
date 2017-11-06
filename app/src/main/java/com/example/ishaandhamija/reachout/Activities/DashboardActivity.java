@@ -125,46 +125,92 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         getLocation = new GetLocation() {
             @Override
             public void onSuccess() {
-                final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                if ((getIntent().getStringExtra("Service") == null) || (getIntent().getStringExtra("Service").equals("All Services"))) {
+                    final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
 //                "http://harshgoyal.xyz:5199/api/showall",
 //                "https://reach-out-server.herokuapp.com/api/showall",
 //                        "http://192.168.43.202:5199/api/showall",
-                        "http://192.168.43.202:5199/api/hospitals",
+                            "http://192.168.43.202:5199/api/hospitals",
 
-                        new Response.Listener<JSONArray>() {
-                            @Override
-                            public void onResponse(JSONArray response) {
+                            new Response.Listener<JSONArray>() {
+                                @Override
+                                public void onResponse(JSONArray response) {
 
-                                for (int i = 0; i < response.length(); i++) {
-                                    JSONObject hospitalObject = null;
-                                    try {
-                                        hospitalObject = response.getJSONObject(i);
-                                        Double hospitalLat = hospitalObject.getDouble("lat");
-                                        Double hospitalLon = hospitalObject.getDouble("lng");
-                                        Log.d(TAG, "Speciality: "+hospitalObject.getString("speciality"));
+                                    for (int i = 0; i < response.length(); i++) {
+                                        JSONObject hospitalObject = null;
+                                        try {
+                                            hospitalObject = response.getJSONObject(i);
+                                            Double hospitalLat = hospitalObject.getDouble("lat");
+                                            Double hospitalLon = hospitalObject.getDouble("lng");
+                                            Log.d(TAG, "checkkkk: " + hospitalObject.getJSONArray("speciality"));
 
-                                        hospitalList.add(new Hospital(hospitalObject.getString("name"),
-                                                hospitalObject.getString("phone1"), hospitalObject.getString("address"),hospitalObject.getString("speciality"), hospitalObject.getDouble("lat"), hospitalObject.getDouble("lng")));
+                                            hospitalList.add(new Hospital(hospitalObject.getString("name"),
+                                                    hospitalObject.getString("phone1"), hospitalObject.getString("address"), hospitalObject.getString("speciality"), hospitalObject.getDouble("lat"), hospitalObject.getDouble("lng")));
 
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
                                     }
+
+                                    getHospitals.onSuccess(hospitalList);
+
                                 }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
 
-                                getHospitals.onSuccess(hospitalList);
-
+                                }
                             }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
+                    );
 
+                    RequestQueue requestQueue = Volley.newRequestQueue(DashboardActivity.this);
+                    requestQueue.add(jsonArrayRequest);
+                }
+                else {
+                    String speciality = getIntent().getStringExtra("Service");
+                    speciality = speciality.replaceAll(" ", "%20");
+                    final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+//                "http://harshgoyal.xyz:5199/api/showall",
+//                "https://reach-out-server.herokuapp.com/api/showall",
+//                        "http://192.168.43.202:5199/api/showall",
+                            "http://192.168.43.202:5199/api/speciality/" + speciality,
+
+                            new Response.Listener<JSONArray>() {
+                                @Override
+                                public void onResponse(JSONArray response) {
+
+                                    for (int i = 0; i < response.length(); i++) {
+                                        JSONObject hospitalObject = null;
+                                        try {
+                                            hospitalObject = response.getJSONObject(i);
+                                            Log.d("yahaaaya", "onResponse: " + hospitalObject.toString());
+                                            Double hospitalLat = hospitalObject.getDouble("lat");
+                                            Double hospitalLon = hospitalObject.getDouble("lng");
+
+                                            hospitalList.add(new Hospital(hospitalObject.getString("name"),
+                                                    hospitalObject.getString("phone1"), hospitalObject.getString("address"), hospitalObject.getString("speciality"), hospitalObject.getDouble("lat"), hospitalObject.getDouble("lng")));
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                    getHospitals.onSuccess(hospitalList);
+
+                                }
+                            },
+                            new Response.ErrorListener() {
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+
+                                }
                             }
-                        }
-                );
+                    );
 
-                RequestQueue requestQueue = Volley.newRequestQueue(DashboardActivity.this);
-                requestQueue.add(jsonArrayRequest);
+                    RequestQueue requestQueue = Volley.newRequestQueue(DashboardActivity.this);
+                    requestQueue.add(jsonArrayRequest);
+                }
             }
         };
 
@@ -294,6 +340,20 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                         hospitalDistance.setText(dist.toString() + " km");
 
                         hospitalInfo.setVisibility(View.VISIBLE);
+
+                        final int finalI = i;
+                        final Double finalDist = dist;
+                        hospitalInfo.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Intent intent = new Intent(DashboardActivity.this, HospitalActivity.class);
+                                intent.putExtra("hname", hospitalList.get(finalI).getName());
+                                intent.putExtra("haddress", hospitalList.get(finalI).getAddress());
+                                intent.putExtra("hphonenumber", hospitalList.get(finalI).getPhonenumber());
+                                intent.putExtra("hdistance", finalDist.toString());
+                                startActivity(intent);
+                            }
+                        });
 
                         return true;
                     }
@@ -483,7 +543,6 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                     }
                 }
         );
-
         RequestQueue requestQueue = Volley.newRequestQueue(DashboardActivity.this);
         requestQueue.add(jsonArrayRequest);
     }
@@ -494,6 +553,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.d("services", "onResponse: " + response+"\t"+response.length());
+                        services.add("All Services");
                         for (int i=0;i<response.length();++i){
                             try {
                                 Log.d(TAG, "onResponse: "+response.getString(i));
@@ -513,4 +573,5 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         RequestQueue requestQueue = Volley.newRequestQueue(DashboardActivity.this);
         requestQueue.add(jsonArrayRequest);
     }
+
 }

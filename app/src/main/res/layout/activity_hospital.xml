@@ -107,7 +107,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/colorPrimaryDark"></View>
+                android:background="@color/colorPrimaryDark"/>
 
             <TextView
                 android:id="@+id/services"
@@ -115,7 +115,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:gravity="center"
-                android:text="24 Hours Emergency Services\n24 Hours Pharmacy\n24 Hours Laboratory\n24 Hours Ambulance" />
+                android:text="Emergency\nICU\nBlood Bank facility\n24 hour Pharmacy\nAmbulance and day care facilities\nIntensive and Critical Care Units" />
         </LinearLayout>
 
         <LinearLayout
@@ -137,7 +137,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:background="@color/colorPrimaryDark"></View>
+                android:background="@color/colorPrimaryDark"/>
 
             <TextView
                 android:id="@+id/specialities"
@@ -145,7 +145,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:gravity="center"
-                android:text="24 Hours Emergency Services\n24 Hours Pharmacy\n24 Hours Laboratory\n24 Hours Ambulance" />
+                android:text="Anesthesiology\nCardiology\nCardiac Surgery\nGastroenterology" />
         </LinearLayout>
 
 

@@ -20,5 +20,10 @@ public class HospitalActivity extends AppCompatActivity {
         hContact = (TextView) findViewById(R.id.hospitalContact);
         hDistance = (TextView) findViewById(R.id.hospitalDistance);
 
+        hName.setText(getIntent().getStringExtra("hname"));
+        hAddress.setText(getIntent().getStringExtra("haddress"));
+        hContact.setText(getIntent().getStringExtra("hphonenumber"));
+        hDistance.setText(getIntent().getStringExtra("hdistance") + " kms away");
+
     }
 }
