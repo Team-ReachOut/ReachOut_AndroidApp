@@ -109,13 +109,12 @@
                 android:layout_height="2dp"
                 android:background="@color/colorPrimaryDark"/>
 
-            <TextView
-                android:id="@+id/services"
+            <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:gravity="center"
-                android:text="Emergency\nICU\nBlood Bank facility\n24 hour Pharmacy\nAmbulance and day care facilities\nIntensive and Critical Care Units" />
+                android:layout_margin="5dp"
+                android:id="@+id/rvList1"/>
+
         </LinearLayout>
 
         <LinearLayout
@@ -139,13 +138,12 @@
                 android:layout_height="2dp"
                 android:background="@color/colorPrimaryDark"/>
 
-            <TextView
-                android:id="@+id/specialities"
+            <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:gravity="center"
-                android:text="Anesthesiology\nCardiology\nCardiac Surgery\nGastroenterology" />
+                android:layout_margin="5dp"
+                android:id="@+id/rvList2"/>
+
         </LinearLayout>
 
 
