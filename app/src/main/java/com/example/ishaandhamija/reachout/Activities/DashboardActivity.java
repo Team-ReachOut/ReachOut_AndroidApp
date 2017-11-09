@@ -142,10 +142,12 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                                             hospitalObject = response.getJSONObject(i);
                                             Double hospitalLat = hospitalObject.getDouble("lat");
                                             Double hospitalLon = hospitalObject.getDouble("lng");
+                                            Log.d("choda", "onResponse: "+hospitalObject);
                                             Log.d(TAG, "checkkkk: " + hospitalObject.getJSONArray("speciality"));
+                                            Log.d("bataa", "onResponse: "+hospitalObject.getJSONArray("services"));
 
                                             hospitalList.add(new Hospital(hospitalObject.getString("name"),
-                                                    hospitalObject.getString("phone1"), hospitalObject.getString("address"), hospitalObject.getString("speciality"), hospitalObject.getDouble("lat"), hospitalObject.getDouble("lng")));
+                                                    hospitalObject.getString("phone1"),hospitalObject.getString("phone2"),hospitalObject.getString("phone3"), hospitalObject.getString("address"), hospitalObject.getJSONArray("speciality"),hospitalObject.getJSONArray("services"), hospitalObject.getDouble("lat"), hospitalObject.getDouble("lng")));
 
                                         } catch (JSONException e) {
                                             e.printStackTrace();
@@ -189,7 +191,11 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                                             Double hospitalLon = hospitalObject.getDouble("lng");
 
                                             hospitalList.add(new Hospital(hospitalObject.getString("name"),
-                                                    hospitalObject.getString("phone1"), hospitalObject.getString("address"), hospitalObject.getString("speciality"), hospitalObject.getDouble("lat"), hospitalObject.getDouble("lng")));
+                                                    hospitalObject.getString("phone1"),hospitalObject.getString("phone2"),hospitalObject.getString("phone3"), hospitalObject.getString("address"), hospitalObject.getJSONArray("speciality"),
+                                                    hospitalObject.getJSONArray("services"), hospitalObject.getDouble("lat"),
+                                                    hospitalObject.getDouble("lng")));
+
+
 
                                         } catch (JSONException e) {
                                             e.printStackTrace();
@@ -349,8 +355,12 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                                 Intent intent = new Intent(DashboardActivity.this, HospitalActivity.class);
                                 intent.putExtra("hname", hospitalList.get(finalI).getName());
                                 intent.putExtra("haddress", hospitalList.get(finalI).getAddress());
-                                intent.putExtra("hphonenumber", hospitalList.get(finalI).getPhonenumber());
+                                intent.putExtra("hphonenumber1", hospitalList.get(finalI).getPhone1());
+                                intent.putExtra("hphonenumber2", hospitalList.get(finalI).getPhone2());
+                                intent.putExtra("hphonenumber3", hospitalList.get(finalI).getPhone3());
                                 intent.putExtra("hdistance", finalDist.toString());
+                                intent.putExtra("jsonArrayServices",hospitalList.get(finalI).getSpecialities().toString());
+                                intent.putExtra("jsonArraySpecialities", hospitalList.get(finalI).getServices().toString());
                                 startActivity(intent);
                             }
                         });
