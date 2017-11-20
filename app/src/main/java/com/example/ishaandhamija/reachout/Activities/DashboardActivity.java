@@ -7,8 +7,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.util.Log;
@@ -16,6 +19,7 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -90,11 +94,17 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     public static final String MyPREFERENCES = "MyPrefs" ;
     private ArrayList<String> allRelatives;
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         supportRequestWindowFeature(Window.FEATURE_ACTION_BAR_OVERLAY);
         setContentView(R.layout.activity_dashboard);
+
+        Window window = this.getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
 
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         getSupportActionBar().setTitle("");
@@ -345,7 +355,12 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
                         hospitalDistance.setText(dist.toString() + " km");
 
+                        int hospitalInfoHeight = hospitalInfo.getMeasuredHeight();
+                        int hospitalInfoWidth = hospitalInfo.getMeasuredWidth();
+                        setMargins(btnFilter,0,0,42,hospitalInfoHeight+200);
+
                         hospitalInfo.setVisibility(View.VISIBLE);
+
 
                         final int finalI = i;
                         final Double finalDist = dist;
@@ -373,14 +388,20 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         });
     }
 
+    public static void setMargins (View v, int l, int t, int r, int b) {
+        if (v.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) v.getLayoutParams();
+            p.setMargins(l, t, r, b);
+            v.requestLayout();
+        }
+    }
+
     private int getTransparentColor(int color){
         int alpha = Color.alpha(color);
         int red = Color.red(color);
         int green = Color.green(color);
         int blue = Color.blue(color);
-
         alpha *= 0.25;
-
         return Color.argb(alpha, red, green, blue);
     }
 

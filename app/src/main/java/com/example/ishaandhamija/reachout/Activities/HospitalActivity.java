@@ -60,7 +60,7 @@ public class HospitalActivity extends AppCompatActivity {
             number = number + "\n"+ "Appointment : "+ phone2;
         }
         if (!phone3.equals("")){
-            number = number + "\n" + "Fax : " + phone3;
+            number = number + "\n" + "Emergency : " + phone3;
         }
         hContact.setText(number);
 
