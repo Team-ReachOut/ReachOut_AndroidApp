@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -93,6 +94,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     ArrayList<String> emergencies;
     MaterialSpinner spinner1,spinner2;
     Button btnSubmit;
+    ImageView btnMyLoc;
 
     ProgressDialog progressDialog;
 
@@ -136,6 +138,7 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         hospitalInfo = (CardView) findViewById(R.id.hospitalInfo);
         emegencyBtn = (FloatingActionButton) findViewById(R.id.emergencyBtn);
         btnFilter = (FloatingActionButton) findViewById(R.id.filter);
+        btnMyLoc = (ImageView) findViewById(R.id.mylocation);
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Fetching your location...");
@@ -259,6 +262,13 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         else{
             gps.showSettingsAlert();
         }
+
+        btnMyLoc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mapp.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 15.0f));
+            }
+        });
 
         emegencyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
