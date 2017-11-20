@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -36,6 +37,7 @@ import com.example.ishaandhamija.reachout.Interfaces.GetLocation;
 import com.example.ishaandhamija.reachout.Models.Hospital;
 import com.example.ishaandhamija.reachout.Models.Relative;
 import com.example.ishaandhamija.reachout.R;
+import com.example.ishaandhamija.reachout.Utils.DirectionsJSONParser;
 import com.example.ishaandhamija.reachout.Utils.GPSTracker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -46,14 +48,25 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.jaredrummler.materialspinner.MaterialSpinner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static com.example.ishaandhamija.reachout.R.id.map;
@@ -85,6 +98,9 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
     ArrayList<Marker> myMarkers;
     Marker myMarker;
+
+    Polyline polyline = null;
+    GoogleMap mapp;
 
     public static GetLocation getLocation;
 
@@ -301,6 +317,8 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     public void onMapReady(final GoogleMap map) {
 
+        mapp = map;
+
         getHospitals = new GetHospitals() {
             @Override
             public void onSuccess(ArrayList<Hospital> latlonList) {
@@ -343,6 +361,13 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
                 for (int i=0;i<myMarkers.size();i++){
                     if (marker.equals(myMarkers.get(i))){
+
+                        String url = getDirectionsUrl(new LatLng(latitude, longitude),
+                                new LatLng(hospitalList.get(i).getLat(), hospitalList.get(i).getLon()));
+
+                        DownloadTask downloadTask = new DownloadTask();
+
+                        downloadTask.execute(url);
 
                         hospitalName.setText(hospitalList.get(i).getName());
                         hospitalAddress.setText(hospitalList.get(i).getAddress());
@@ -605,4 +630,142 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         requestQueue.add(jsonArrayRequest);
     }
 
+    private String getDirectionsUrl(LatLng origin,LatLng dest){
+
+        String str_origin = "origin="+origin.latitude+","+origin.longitude;
+
+        String str_dest = "destination="+dest.latitude+","+dest.longitude;
+
+        String sensor = "sensor=false";
+
+        String parameters = str_origin+"&"+str_dest+"&"+sensor;
+
+        String output = "json";
+
+        String url = "https://maps.googleapis.com/maps/api/directions/"+output+"?"+parameters;
+
+        return url;
+    }
+
+    private String downloadUrl(String strUrl) throws IOException {
+        String data = "";
+        InputStream iStream = null;
+        HttpURLConnection urlConnection = null;
+        try{
+            URL url = new URL(strUrl);
+
+            urlConnection = (HttpURLConnection) url.openConnection();
+
+            urlConnection.connect();
+
+            iStream = urlConnection.getInputStream();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(iStream));
+
+            StringBuffer sb = new StringBuffer();
+
+            String line = "";
+            while( ( line = br.readLine()) != null){
+                sb.append(line);
+            }
+
+            data = sb.toString();
+
+            br.close();
+
+        }catch(Exception e){
+            Log.d("Exception while downloading url", e.toString());
+        }finally{
+            iStream.close();
+            urlConnection.disconnect();
+        }
+        return data;
+    }
+
+    private class DownloadTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... url) {
+
+            String data = "";
+
+            try{
+                data = downloadUrl(url[0]);
+            }catch(Exception e){
+                Log.d("Background Task",e.toString());
+            }
+            return data;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+            ParserTask parserTask = new ParserTask();
+
+            parserTask.execute(result);
+        }
+    }
+
+    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> >{
+
+        @Override
+        protected List<List<HashMap<String, String>>> doInBackground(String... jsonData) {
+
+            JSONObject jObject;
+            List<List<HashMap<String, String>>> routes = null;
+
+            try{
+                jObject = new JSONObject(jsonData[0]);
+                DirectionsJSONParser parser = new DirectionsJSONParser();
+
+                routes = parser.parse(jObject);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+            return routes;
+        }
+
+        @Override
+        protected void onPostExecute(List<List<HashMap<String, String>>> result) {
+            ArrayList<LatLng> points = null;
+            PolylineOptions lineOptions = null;
+            MarkerOptions markerOptions = new MarkerOptions();
+
+            for(int i=0;i<result.size();i++){
+                points = new ArrayList<LatLng>();
+                lineOptions = new PolylineOptions();
+
+                List<HashMap<String, String>> path = result.get(i);
+
+                for(int j=0;j<path.size();j++){
+                    HashMap<String,String> point = path.get(j);
+
+                    double lat = Double.parseDouble(point.get("lat"));
+                    double lng = Double.parseDouble(point.get("lng"));
+                    LatLng position = new LatLng(lat, lng);
+
+                    points.add(position);
+                }
+
+                lineOptions.addAll(points);
+                lineOptions.width(10);
+                lineOptions.color(Color.RED);
+            }
+
+            if (polyline != null){
+                polyline.remove();
+            }
+
+            if (lineOptions != null) {
+                polyline = mapp.addPolyline(lineOptions);
+
+                Integer i = sharedpreferences.getInt("markerIndex", -1);
+
+                if (i > -1) {
+                    DecimalFormat df = new DecimalFormat("#.##");
+                }
+            }
+        }
+    }
 }
