@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ReachOut2.iml" filepath="$PROJECT_DIR$/ReachOut2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ReachOut_AndroidApp.iml" filepath="$PROJECT_DIR$/ReachOut_AndroidApp.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/reachout_androidapp.iml" filepath="$PROJECT_DIR$/reachout_androidapp.iml" />
     </modules>

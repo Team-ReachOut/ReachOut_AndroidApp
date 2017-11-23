@@ -74,10 +74,10 @@ public class HospitalActivity extends AppCompatActivity {
 
         try {
             array1 = new JSONArray(jsonArray1);
-            if (array1.length() ==0 )tvNoService.setVisibility(View.VISIBLE);
+            if (array1.length() ==0 )tvNoSpeciality.setVisibility(View.VISIBLE);
 
             array2 = new JSONArray(jsonArray2);
-            if (array2.length() == 0)tvNoSpeciality.setVisibility(View.VISIBLE);
+            if (array2.length() == 0)tvNoService.setVisibility(View.VISIBLE);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -98,13 +98,13 @@ public class HospitalActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-        recyclerAdapter1 = new RecyclerAdapter(HospitalActivity.this, serviceList);
+        recyclerAdapter1 = new RecyclerAdapter(HospitalActivity.this, specialityList);
         recyclerView1.setLayoutManager(new LinearLayoutManager(HospitalActivity.this));
         recyclerView1.setAdapter(recyclerAdapter1);
 
 
 
-        recyclerAdapter2 = new RecyclerAdapter(HospitalActivity.this, specialityList);
+        recyclerAdapter2 = new RecyclerAdapter(HospitalActivity.this, serviceList);
         recyclerView2.setLayoutManager(new LinearLayoutManager(HospitalActivity.this));
         recyclerView2.setAdapter(recyclerAdapter2);
 
