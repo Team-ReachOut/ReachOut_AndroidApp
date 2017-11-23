@@ -154,58 +154,106 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
         getLocation = new GetLocation() {
             @Override
             public void onSuccess() {
-                if ((getIntent().getStringExtra("Service") == null) || (getIntent().getStringExtra("Service").equals("All Services"))) {
-                    final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                if (sharedpreferences.getString("bloodBank", null) == null) {
+                    btnFilter.setVisibility(View.VISIBLE);
+                    if ((getIntent().getStringExtra("Service") == null) || (getIntent().getStringExtra("Service").equals("All Services"))) {
+                        final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
 //                "http://harshgoyal.xyz:5199/api/showall",
 //                "https://reach-out-server.herokuapp.com/api/showall",
 //                        "http://192.168.43.202:5199/api/showall",
-                            "http://192.168.43.202:5199/api/hospitals",
+                                "http://192.168.43.202:5199/api/hospitals",
 
-                            new Response.Listener<JSONArray>() {
-                                @Override
-                                public void onResponse(JSONArray response) {
+                                new Response.Listener<JSONArray>() {
+                                    @Override
+                                    public void onResponse(JSONArray response) {
 
-                                    for (int i = 0; i < response.length(); i++) {
-                                        JSONObject hospitalObject = null;
-                                        try {
-                                            hospitalObject = response.getJSONObject(i);
-                                            Double hospitalLat = hospitalObject.getDouble("lat");
-                                            Double hospitalLon = hospitalObject.getDouble("lng");
-                                            Log.d("choda", "onResponse: "+hospitalObject);
-                                            Log.d(TAG, "checkkkk: " + hospitalObject.getJSONArray("speciality"));
-                                            Log.d("bataa", "onResponse: "+hospitalObject.getJSONArray("services"));
+                                        for (int i = 0; i < response.length(); i++) {
+                                            JSONObject hospitalObject = null;
+                                            try {
+                                                hospitalObject = response.getJSONObject(i);
+                                                Double hospitalLat = hospitalObject.getDouble("lat");
+                                                Double hospitalLon = hospitalObject.getDouble("lng");
+                                                Log.d("choda", "onResponse: " + hospitalObject);
+                                                Log.d(TAG, "checkkkk: " + hospitalObject.getJSONArray("speciality"));
+                                                Log.d("bataa", "onResponse: " + hospitalObject.getJSONArray("services"));
 
-                                            hospitalList.add(new Hospital(hospitalObject.getString("name"),
-                                                    hospitalObject.getString("phone1"),hospitalObject.getString("phone2"),hospitalObject.getString("phone3"), hospitalObject.getString("address"), hospitalObject.getJSONArray("speciality"),hospitalObject.getJSONArray("services"), hospitalObject.getDouble("lat"), hospitalObject.getDouble("lng")));
+                                                hospitalList.add(new Hospital(hospitalObject.getString("name"),
+                                                        hospitalObject.getString("phone1"), hospitalObject.getString("phone2"), hospitalObject.getString("phone3"), hospitalObject.getString("address"), hospitalObject.getJSONArray("speciality"), hospitalObject.getJSONArray("services"), hospitalObject.getDouble("lat"), hospitalObject.getDouble("lng")));
 
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
                                         }
+
+                                        getHospitals.onSuccess(hospitalList);
+
                                     }
+                                },
+                                new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
 
-                                    getHospitals.onSuccess(hospitalList);
-
+                                    }
                                 }
-                            },
-                            new Response.ErrorListener() {
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
+                        );
 
+                        RequestQueue requestQueue = Volley.newRequestQueue(DashboardActivity.this);
+                        requestQueue.add(jsonArrayRequest);
+                    } else {
+                        String speciality = getIntent().getStringExtra("Service");
+                        speciality = speciality.replaceAll(" ", "%20");
+                        final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+//                "http://harshgoyal.xyz:5199/api/showall",
+//                "https://reach-out-server.herokuapp.com/api/showall",
+//                        "http://192.168.43.202:5199/api/showall",
+                                "http://192.168.43.202:5199/api/speciality/" + speciality,
+
+                                new Response.Listener<JSONArray>() {
+                                    @Override
+                                    public void onResponse(JSONArray response) {
+
+                                        for (int i = 0; i < response.length(); i++) {
+                                            JSONObject hospitalObject = null;
+                                            try {
+                                                hospitalObject = response.getJSONObject(i);
+                                                Log.d("yahaaaya", "onResponse: " + hospitalObject.toString());
+                                                Double hospitalLat = hospitalObject.getDouble("lat");
+                                                Double hospitalLon = hospitalObject.getDouble("lng");
+
+                                                hospitalList.add(new Hospital(hospitalObject.getString("name"),
+                                                        hospitalObject.getString("phone1"), hospitalObject.getString("phone2"), hospitalObject.getString("phone3"), hospitalObject.getString("address"), hospitalObject.getJSONArray("speciality"),
+                                                        hospitalObject.getJSONArray("services"), hospitalObject.getDouble("lat"),
+                                                        hospitalObject.getDouble("lng")));
+
+
+                                            } catch (JSONException e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+
+                                        getHospitals.onSuccess(hospitalList);
+
+                                    }
+                                },
+                                new Response.ErrorListener() {
+                                    @Override
+                                    public void onErrorResponse(VolleyError error) {
+
+                                    }
                                 }
-                            }
-                    );
+                        );
 
-                    RequestQueue requestQueue = Volley.newRequestQueue(DashboardActivity.this);
-                    requestQueue.add(jsonArrayRequest);
+                        RequestQueue requestQueue = Volley.newRequestQueue(DashboardActivity.this);
+                        requestQueue.add(jsonArrayRequest);
+                    }
                 }
                 else {
-                    String speciality = getIntent().getStringExtra("Service");
-                    speciality = speciality.replaceAll(" ", "%20");
+                    btnFilter.setVisibility(View.GONE);
                     final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
 //                "http://harshgoyal.xyz:5199/api/showall",
 //                "https://reach-out-server.herokuapp.com/api/showall",
 //                        "http://192.168.43.202:5199/api/showall",
-                            "http://192.168.43.202:5199/api/speciality/" + speciality,
+                            "http://192.168.43.202:5199/api/bloodbank",
 
                             new Response.Listener<JSONArray>() {
                                 @Override
@@ -215,16 +263,14 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                                         JSONObject hospitalObject = null;
                                         try {
                                             hospitalObject = response.getJSONObject(i);
-                                            Log.d("yahaaaya", "onResponse: " + hospitalObject.toString());
                                             Double hospitalLat = hospitalObject.getDouble("lat");
                                             Double hospitalLon = hospitalObject.getDouble("lng");
+                                            Log.d("choda", "onResponse: " + hospitalObject);
+                                            Log.d(TAG, "checkkkk: " + hospitalObject.getJSONArray("speciality"));
+                                            Log.d("bataa", "onResponse: " + hospitalObject.getJSONArray("services"));
 
                                             hospitalList.add(new Hospital(hospitalObject.getString("name"),
-                                                    hospitalObject.getString("phone1"),hospitalObject.getString("phone2"),hospitalObject.getString("phone3"), hospitalObject.getString("address"), hospitalObject.getJSONArray("speciality"),
-                                                    hospitalObject.getJSONArray("services"), hospitalObject.getDouble("lat"),
-                                                    hospitalObject.getDouble("lng")));
-
-
+                                                    hospitalObject.getString("phone1"), hospitalObject.getString("phone2"), hospitalObject.getString("phone3"), hospitalObject.getString("address"), hospitalObject.getJSONArray("speciality"), hospitalObject.getJSONArray("services"), hospitalObject.getDouble("lat"), hospitalObject.getDouble("lng")));
 
                                         } catch (JSONException e) {
                                             e.printStackTrace();
@@ -350,11 +396,20 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
 
                 for (int i=0;i<latlonList.size();i++){
 
-                    Marker marker = map.addMarker(new MarkerOptions()
-                            .position(new LatLng(hospitalList.get(i).getLat(), hospitalList.get(i).getLon()))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.placeholder)));
+                    if (sharedpreferences.getString("bloodBank", null) == null) {
+                        Marker marker = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(hospitalList.get(i).getLat(), hospitalList.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.placeholder)));
 
-                    myMarkers.add(marker);
+                        myMarkers.add(marker);
+                    }
+                    else {
+                        Marker marker = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(hospitalList.get(i).getLat(), hospitalList.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.bloodbank)));
+
+                        myMarkers.add(marker);
+                    }
                 }
 
                 progressDialog.dismiss();
@@ -459,9 +514,39 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.action_menu_items,menu);
+        MenuItem bloodBankToggle = menu.findItem(R.id.bloodBankToggle);
         MenuItem editProfile = menu.findItem(R.id.editProfile);
+        MenuItem tips = menu.findItem(R.id.tips);
         MenuItem signOut = menu.findItem(R.id.signOut);
         MenuItem relatives = menu.findItem(R.id.relatives);
+
+        if (sharedpreferences.getString("bloodBank", null) == null) {
+            bloodBankToggle.setTitle("Blood Banks");
+            bloodBankToggle.setIcon(R.drawable.transfusion2);
+        }
+        else {
+            bloodBankToggle.setTitle("Hospitals");
+            bloodBankToggle.setIcon(R.drawable.transfusion1);
+        }
+
+        bloodBankToggle.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                Intent intent = new Intent(DashboardActivity.this, DashboardActivity.class);
+                if (sharedpreferences.getString("bloodBank", null) == null) {
+                    SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+                    prefsEditor.putString("bloodBank", "yes");
+                    prefsEditor.commit();
+                }
+                else {
+                    SharedPreferences.Editor prefsEditor = sharedpreferences.edit();
+                    prefsEditor.putString("bloodBank", null);
+                    prefsEditor.commit();
+                }
+                startActivity(intent);
+                return false;
+            }
+        });
 
         editProfile.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -479,6 +564,14 @@ public class DashboardActivity extends AppCompatActivity implements OnMapReadyCa
                     i.putExtra("sex", getIntent().getStringExtra("sex"));
                     startActivity(i);
 
+                return false;
+            }
+        });
+
+        tips.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                startActivity(new Intent(DashboardActivity.this, TipsActivity.class));
                 return false;
             }
         });

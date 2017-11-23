@@ -3,19 +3,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        app:showAsAction="always"
+        android:id="@+id/bloodBankToggle" />
+    <item
         android:title="Edit profile"
         app:showAsAction="never"
-        android:id="@+id/editProfile"></item>
+        android:id="@+id/editProfile" />
 
     <item
         android:title="My Relatives"
         app:showAsAction="never"
-        android:id="@+id/relatives"></item>
+        android:id="@+id/relatives" />
+
+    <item
+        android:title="Health Tips"
+        app:showAsAction="never"
+        android:id="@+id/tips" />
 
     <item
         android:title="Sign Out"
         app:showAsAction="never"
-        android:id="@+id/signOut"></item>
+        android:id="@+id/signOut" />
 
 
 
